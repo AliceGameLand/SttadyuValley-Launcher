@@ -287,7 +287,7 @@ function renderHomeServerList(distro){
         icon.addEventListener('error', () => { icon.src = fallbackIcon }, { once: true })
 
         const label = document.createElement('span')
-        label.textContent = 'Sunlit Valley'
+        label.textContent = rawServer.name
         button.title = rawServer.name
         button.append(icon, label)
         button.onclick = () => selectLauncherServer(rawServer.id, distro)

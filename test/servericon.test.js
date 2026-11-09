@@ -9,6 +9,7 @@ test('the bundled profile has one Sunlit Valley pack and its local icon', () => 
     assert.equal(distribution.servers.length, 1)
     const [profile] = distribution.servers
     assert.equal(profile.id, 'sunlit-valley-4.1.5a')
+    assert.equal(profile.name, 's\'따듀밸리')
     assert.equal(profile.autoconnect, false)
     assert.equal(getServerIcon(profile), profile.icon)
     const bytes = fs.readFileSync(path.join(__dirname, '../app', profile.icon))
