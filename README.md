@@ -10,7 +10,7 @@ Windows x64용 **Society: Sunlit Valley 4.1.5A** 런처입니다. Helios 기반 
 
 Prism 원본은 읽기 전용으로 사용합니다. 모드·리소스팩·셰이더팩은 정확한 해시를 확인해 복사하고 기본 설정은 CurseForge 원본 아카이브에서 가져옵니다. 월드·서버 목록·개인 옵션·계정은 가져오기에서 제외합니다.
 
-설정에서 [공식 Buzzy Bees 배경](https://www.minecraft.net/en-us/collectibles)을 이 PC에 적용할 수 있습니다. Minecraft의 공식 제품이 아니며 Mojang 또는 Microsoft의 승인·제휴와 관계없습니다.
+첫 실행 때 [공식 Buzzy Bees 배경](https://www.minecraft.net/en-us/collectibles)을 내려받습니다. 설정에서 단색 배경으로 바꿀 수 있습니다. Minecraft의 공식 제품이 아니며 Mojang 또는 Microsoft의 승인·제휴와 관계없습니다.
 
 ## 개발
 

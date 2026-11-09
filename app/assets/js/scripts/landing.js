@@ -113,7 +113,7 @@ async function changeWallpaper(install){
         if(install) await ValleyWallpaper.install(ConfigManager.getLauncherDirectory())
         else await ValleyWallpaper.reset(ConfigManager.getLauncherDirectory())
         showValleyWallpaper()
-        wallpaperStatus.textContent = install ? '공식 배경을 적용했어요.' : '기본 배경을 적용했어요.'
+        wallpaperStatus.textContent = install ? '공식 배경을 적용했어요.' : '단색 배경을 적용했어요.'
     } catch(error) {
         wallpaperStatus.textContent = '배경을 적용하지 못했어요. 잠시 뒤 다시 시도해 주세요.'
         loggerLanding.warn('Wallpaper change failed.', error.message)

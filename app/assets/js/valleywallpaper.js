@@ -10,9 +10,11 @@ function localFile(directory) {
     return path.join(directory, 'buzzy-bees.png')
 }
 
+const solidBackground = directory => path.join(directory, '.solid-background')
+
 function localUrl(directory) {
     const file = localFile(directory)
-    return fs.existsSync(file) ? pathToFileURL(file).href : null
+    return !fs.existsSync(solidBackground(directory)) && fs.existsSync(file) ? pathToFileURL(file).href : null
 }
 
 async function install(directory, timeout = 20000, retries = 1) {
@@ -27,6 +29,7 @@ async function install(directory, timeout = 20000, retries = 1) {
     try {
         await fs.outputFile(temporary, data)
         await fs.rename(temporary, destination)
+        await fs.remove(solidBackground(directory))
     } finally {
         await fs.remove(temporary)
     }
@@ -36,11 +39,13 @@ exports.install = install
 exports.localUrl = localUrl
 const legacyFile = directory => path.join(directory, 'village-pillage.png')
 
-// Refresh only profiles which already opted in to an official wallpaper.
-exports.refreshLegacy = async function(directory) {
-    if(!localUrl(directory) && await fs.pathExists(legacyFile(directory))) {
+exports.ensureDefault = async function(directory) {
+    if(!localUrl(directory) && !await fs.pathExists(solidBackground(directory))) {
         await install(directory, 8000, 0)
     }
 }
 
-exports.reset = directory => Promise.all([fs.remove(localFile(directory)), fs.remove(legacyFile(directory))])
+exports.reset = async function(directory) {
+    await fs.outputFile(solidBackground(directory), '')
+    await Promise.all([fs.remove(localFile(directory)), fs.remove(legacyFile(directory))])
+}
