@@ -18,3 +18,27 @@ exports.disableTutorial = function(gameDirectory, fullscreen){
         fs.writeFileSync(optionsPath, updated, 'utf8')
     }
 }
+
+
+// Replace the pack defaults once. Later shader choices belong to the player.
+exports.applyShaderDefaults = function(gameDirectory){
+    const marker = path.join(gameDirectory, '.sttadyu-shader-defaults')
+    if(fs.existsSync(marker)) return
+    const file = path.join(gameDirectory, 'config', 'oculus.properties')
+    const source = fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : ''
+    const enabled = /^enableShaders\s*=\s*([^\r\n]*)/m.exec(source)?.[1].trim()
+    const selected = /^shaderPack\s*=\s*([^\r\n]*)/m.exec(source)?.[1].trim()
+    const stock = enabled === 'false' && selected === 'ComplementaryReimagined_r5.6.1 + Clrwl_1.0.4.zip'
+    if(stock || (enabled == null && selected == null)){
+        const newline = source.includes('\r\n') ? '\r\n' : '\n'
+        const updated = stock
+            ? source.replace(/^enableShaders[ \t]*=[^\r\n]*/m, 'enableShaders=true')
+                .replace(/^shaderPack[ \t]*=[^\r\n]*/m, 'shaderPack=ComplementaryReimagined_r5.9.1.zip')
+            : source + (source && !source.endsWith('\n') ? newline : '')
+                + ['enableShaders=true', 'shaderPack=ComplementaryReimagined_r5.9.1.zip', ''].join(newline)
+        fs.mkdirSync(path.dirname(file), { recursive: true })
+        fs.writeFileSync(file, updated, 'utf8')
+    }
+    fs.writeFileSync(marker, '')
+}
+

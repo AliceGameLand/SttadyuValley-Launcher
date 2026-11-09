@@ -11,6 +11,7 @@ const DiscordWrapper    = require('./assets/js/discordwrapper')
 const ForgeInstaller = require('./assets/js/forgeinstaller')
 const SunlitPack = require('./assets/js/sunlitpack')
 const { ensureServerEntry } = require('./assets/js/serverlist')
+const { applyShaderDefaults } = require('./assets/js/gameoptions')
 const ValleyWallpaper = require('./assets/js/valleywallpaper')
 const ProcessBuilder    = require('./assets/js/processbuilder')
 const { createLaunchDiagnostic } = require('./assets/js/launchdiagnostic')
@@ -637,6 +638,7 @@ async function dlAsync(serverId, attempt) {
     }
 
     try {
+        applyShaderDefaults(gameDirectory())
         // Build Minecraft process.
         if(serv.rawServer.autoconnect){
             await ensureServerEntry(gameDirectory(), serv.rawServer).catch(error => {

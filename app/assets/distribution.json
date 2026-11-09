@@ -29,6 +29,50 @@
                         "MD5": "1f25e574d30ba5b336fb97cdf8335be4",
                         "url": "https://maven.minecraftforge.net/net/minecraftforge/forge/1.20.1-47.4.0/forge-1.20.1-47.4.0-installer.jar"
                     }
+                },
+                {
+                    "id": "sunlit:mods/koreanpatch-forge-1.9.6+mc1.20.1.jar",
+                    "name": "Korean Chat Patch 1.9.6",
+                    "type": "File",
+                    "artifact": {
+                        "size": 378658,
+                        "MD5": "fc68072473d9a8043d14c7d88a9f92e6",
+                        "url": "https://cdn.modrinth.com/data/qyulnpBL/versions/6R6bSXKY/koreanpatch-forge-1.9.6%2Bmc1.20.1.jar",
+                        "path": "mods/koreanpatch-forge-1.9.6+mc1.20.1.jar"
+                    }
+                },
+                {
+                    "id": "sunlit:shaderpacks/BSL_v10.1.5.zip",
+                    "name": "BSL_v10.1.5.zip",
+                    "type": "File",
+                    "artifact": {
+                        "size": 1133936,
+                        "MD5": "f1f6a07f62cf668b17c333d4c80b6f6f",
+                        "url": "https://cdn.modrinth.com/data/Q1vvjJYV/versions/yFTiE1Nc/BSL_v10.1.5.zip",
+                        "path": "shaderpacks/BSL_v10.1.5.zip"
+                    }
+                },
+                {
+                    "id": "sunlit:shaderpacks/ComplementaryReimagined_r5.9.1.zip",
+                    "name": "ComplementaryReimagined_r5.9.1.zip",
+                    "type": "File",
+                    "artifact": {
+                        "size": 552945,
+                        "MD5": "5cd436e5bebc013fa1781b3cd6a9aad6",
+                        "url": "https://cdn.modrinth.com/data/HVnmMxH1/versions/ErCjThzb/ComplementaryReimagined_r5.9.1.zip",
+                        "path": "shaderpacks/ComplementaryReimagined_r5.9.1.zip"
+                    }
+                },
+                {
+                    "id": "sunlit:shaderpacks/ComplementaryUnbound_r5.9.1.zip",
+                    "name": "ComplementaryUnbound_r5.9.1.zip",
+                    "type": "File",
+                    "artifact": {
+                        "size": 552949,
+                        "MD5": "af14f654ae0f496d0aaa2deac0faff65",
+                        "url": "https://cdn.modrinth.com/data/R6NEzAwj/versions/UhZjVKiD/ComplementaryUnbound_r5.9.1.zip",
+                        "path": "shaderpacks/ComplementaryUnbound_r5.9.1.zip"
+                    }
                 }
             ]
         }

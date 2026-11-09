@@ -30,7 +30,7 @@ function createHarness(){
             getCommonDirectory: () => '', getInstanceDirectory: () => '', getLauncherDirectory: () => '', getJavaExecutable: () => ''
         },
         DistroAPI: { refreshDistributionOrFallback: async () => distribution, isDevMode: () => false },
-        onDistroRefresh(){}, FullRepair: Repair,
+        onDistroRefresh(){}, applyShaderDefaults(){}, FullRepair: Repair,
         ForgeInstaller: { ensureInstalled: async () => {} },
         SunlitPack: { isReady: () => true }, gameDirectory: () => 'fixture',
         MojangIndexProcessor: class { async getVersionJson(){ return {} } },
