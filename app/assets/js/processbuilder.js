@@ -512,6 +512,11 @@ class ProcessBuilder {
                         case 'auth_access_token':
                             val = this.authUser.accessToken
                             break
+                        case 'clientid':
+                        case 'auth_xuid':
+                            // These fields are optional when no telemetry client ID or Xbox ID is available.
+                            val = ''
+                            break
                         case 'user_type':
                             val = 'msa'
                             break
