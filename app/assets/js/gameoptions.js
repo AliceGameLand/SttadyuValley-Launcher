@@ -1,6 +1,13 @@
 const fs = require('fs')
 const path = require('path')
 
+const defaultShader = 'ComplementaryReimagined_r5.9.1.zip'
+const legacyShaders = [
+    'ComplementaryReimagined_r5.6.1.zip',
+    'ComplementaryReimagined_r5.6.1 + Clrwl_1.0.4.zip',
+    'ComplementaryReimagined_r5.6.1 + Clrwl_1.0.5.zip'
+]
+
 // Disable vanilla onboarding without resetting existing player preferences.
 exports.disableTutorial = function(gameDirectory, fullscreen){
     const optionsPath = path.join(gameDirectory, 'options.txt')
@@ -20,26 +27,32 @@ exports.disableTutorial = function(gameDirectory, fullscreen){
 }
 
 
-// Replace the pack defaults once. Later shader choices belong to the player.
+// Upgrade the bundled shader and preserve later player choices.
 exports.applyShaderDefaults = function(gameDirectory){
     const marker = path.join(gameDirectory, '.sttadyu-shader-defaults')
-    if(fs.existsSync(marker)) return
+    const defaultsApplied = fs.existsSync(marker)
     const file = path.join(gameDirectory, 'config', 'oculus.properties')
     const source = fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : ''
     const enabled = /^enableShaders\s*=\s*([^\r\n]*)/m.exec(source)?.[1].trim()
     const selected = /^shaderPack\s*=\s*([^\r\n]*)/m.exec(source)?.[1].trim()
-    const stock = enabled === 'false' && selected === 'ComplementaryReimagined_r5.6.1 + Clrwl_1.0.4.zip'
-    if(stock || (enabled == null && selected == null)){
+    const legacy = legacyShaders.includes(selected)
+    const stock = !defaultsApplied && enabled === 'false' && selected === legacyShaders[1]
+    const shaderDir = path.join(gameDirectory, 'shaderpacks')
+    if(!fs.existsSync(path.join(shaderDir, defaultShader))) return
+    if(legacy || (!defaultsApplied && enabled == null && selected == null)){
         const newline = source.includes('\r\n') ? '\r\n' : '\n'
-        const updated = stock
-            ? source.replace(/^enableShaders[ \t]*=[^\r\n]*/m, 'enableShaders=true')
-                .replace(/^shaderPack[ \t]*=[^\r\n]*/m, 'shaderPack=ComplementaryReimagined_r5.9.1.zip')
+        let updated = legacy
+            ? source.replace(/^shaderPack[ \t]*=[^\r\n]*/m, 'shaderPack=' + defaultShader)
             : source + (source && !source.endsWith('\n') ? newline : '')
-                + ['enableShaders=true', 'shaderPack=ComplementaryReimagined_r5.9.1.zip', ''].join(newline)
+                + ['enableShaders=true', 'shaderPack=' + defaultShader, ''].join(newline)
+        if(stock) updated = updated.replace(/^enableShaders[ \t]*=[^\r\n]*/m, 'enableShaders=true')
         fs.mkdirSync(path.dirname(file), { recursive: true })
         fs.writeFileSync(file, updated, 'utf8')
     }
-    fs.writeFileSync(marker, '')
+    for(const shader of legacyShaders){
+        fs.rmSync(path.join(shaderDir, shader), { force: true })
+    }
+    if(!defaultsApplied) fs.writeFileSync(marker, '')
 }
 
 // Migrate stock values once so subsequent player changes remain intact.

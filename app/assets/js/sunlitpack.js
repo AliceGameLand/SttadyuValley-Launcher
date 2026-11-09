@@ -7,7 +7,7 @@ const got = require('got')
 const pack = require('../config/sunlit-lock.json')
 
 const marker = '.sunlit-pack.json'
-const overrideFolders = new Set(['config', 'configureddefaults', 'defaultconfigs', 'kubejs', 'patchouli_books', 'resourcepacks', 'shaderpacks'])
+const overrideFolders = new Set(['config', 'configureddefaults', 'defaultconfigs', 'kubejs', 'patchouli_books', 'resourcepacks'])
 const activeImports = new Set()
 
 function prismDefault() {
@@ -127,7 +127,7 @@ async function importPack(selected, destination, onProgress = () => {}, getOverr
             throw new Error('Prism 폴더와 새 게임 폴더는 서로 분리되어 있어야 합니다.')
         }
         const names = new Map()
-        for (const folder of ['mods', 'resourcepacks', 'shaderpacks']) {
+        for (const folder of ['mods', 'resourcepacks']) {
             const dir = path.join(game, folder)
             const stat = await fs.lstat(dir).catch(() => null)
             if (stat && !stat.isDirectory()) throw new Error(`Prism의 ${folder} 폴더를 확인해 주세요.`)
