@@ -42,3 +42,24 @@ exports.applyShaderDefaults = function(gameDirectory){
     fs.writeFileSync(marker, '')
 }
 
+// Migrate stock values once so subsequent player changes remain intact.
+exports.applyDisplayDefaults = function(gameDirectory){
+    const marker = path.join(gameDirectory, '.sttadyu-display-defaults')
+    if(fs.existsSync(marker)) return
+    const file = path.join(gameDirectory, 'options.txt')
+    const original = fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : ''
+    const newline = original.includes('\r\n') ? '\r\n' : '\n'
+    let updated = original
+    for(const [key, stock, target] of [['lang', 'en_us', 'ko_kr'], ['guiScale', '3', '4']]){
+        const pattern = new RegExp('^' + key + ':([^\\r\\n]*)', 'm')
+        const match = pattern.exec(updated)
+        const line = key + ':' + target
+        if(!match){
+            updated += (updated && !updated.endsWith('\n') ? newline : '') + line + newline
+        } else if(match[1] === stock){
+            updated = updated.replace(pattern, line)
+        }
+    }
+    if(updated !== original) fs.writeFileSync(file, updated, 'utf8')
+    fs.writeFileSync(marker, '')
+}

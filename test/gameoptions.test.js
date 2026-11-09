@@ -3,7 +3,7 @@ const assert = require('node:assert/strict')
 const fs = require('node:fs')
 const os = require('node:os')
 const path = require('node:path')
-const { disableTutorial } = require('../app/assets/js/gameoptions')
+const { disableTutorial, applyDisplayDefaults } = require('../app/assets/js/gameoptions')
 
 test('Explicit fullscreen launch setting overrides only fullscreen and tutorial options', () => {
     const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'alice-fullscreen-'))
@@ -40,4 +40,26 @@ test('Tutorial is disabled for new and existing options while preserving other s
     } finally {
         fs.rmSync(directory, { recursive: true, force: true })
     }
+})
+
+test('Display defaults migrate stock values once while preserving other preferences', t => {
+    const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'sttadyu-display-'))
+    t.after(() => fs.rmSync(directory, { recursive: true, force: true }))
+    const file = path.join(directory, 'options.txt')
+    const old = 'lang:en_us\r\nguiScale:3\r\nkey_key.attack:key.mouse.left:NONE\r\n'
+    fs.writeFileSync(file, old)
+    applyDisplayDefaults(directory)
+    assert.equal(fs.readFileSync(file, 'utf8'), old.replace('en_us', 'ko_kr').replace('guiScale:3', 'guiScale:4'))
+    fs.writeFileSync(file, old)
+    applyDisplayDefaults(directory)
+    assert.equal(fs.readFileSync(file, 'utf8'), old)
+})
+
+test('Display defaults fill absent settings without replacing a custom GUI scale', t => {
+    const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'sttadyu-display-custom-'))
+    t.after(() => fs.rmSync(directory, { recursive: true, force: true }))
+    const file = path.join(directory, 'options.txt')
+    fs.writeFileSync(file, 'guiScale:2')
+    applyDisplayDefaults(directory)
+    assert.equal(fs.readFileSync(file, 'utf8'), 'guiScale:2\nlang:ko_kr\n')
 })

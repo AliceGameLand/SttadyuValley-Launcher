@@ -8,7 +8,7 @@ const os                    = require('os')
 const path                  = require('path')
 
 const ConfigManager            = require('./configmanager')
-const { disableTutorial }      = require('./gameoptions')
+const { disableTutorial, applyDisplayDefaults }      = require('./gameoptions')
 
 const logger = LoggerUtil.getLogger('ProcessBuilder')
 
@@ -51,6 +51,7 @@ class ProcessBuilder {
         }
         fs.ensureDirSync(this.gameDir)
         disableTutorial(this.gameDir, ConfigManager.getFullscreen())
+        applyDisplayDefaults(this.gameDir)
         process.throwDeprecation = true
         this.setupLiteLoader()
         logger.info('Using liteloader:', this.usingLiteLoader)
