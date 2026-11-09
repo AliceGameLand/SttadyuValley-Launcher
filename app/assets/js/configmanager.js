@@ -209,16 +209,6 @@ exports.setServerSelectionRequired = function(required){
     config.serverSelectionRequired = required
 }
 
-/**
- * Returns the name of the folder in the OS temp directory which we
- * will use to extract and store native dependencies for game launch.
- * 
- * @returns {string} The name of the folder.
- */
-exports.getTempNativeFolder = function(){
-    return 'SttadyuValleyNatives'
-}
-
 // System Settings (Unconfigurable on UI)
 
 /**

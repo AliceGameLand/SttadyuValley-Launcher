@@ -1,6 +1,5 @@
 const AdmZip                = require('adm-zip')
 const child_process         = require('child_process')
-const crypto                = require('crypto')
 const fs                    = require('fs-extra')
 const { LoggerUtil }        = require('helios-core')
 const { getMojangOS, isLibraryCompatible, mcVersionAtLeast }  = require('helios-core/common')
@@ -52,7 +51,6 @@ class ProcessBuilder {
         }
         fs.ensureDirSync(this.gameDir)
         disableTutorial(this.gameDir, ConfigManager.getFullscreen())
-        const tempNativePath = path.join(os.tmpdir(), ConfigManager.getTempNativeFolder(), crypto.pseudoRandomBytes(16).toString('hex'))
         process.throwDeprecation = true
         this.setupLiteLoader()
         logger.info('Using liteloader:', this.usingLiteLoader)
@@ -72,7 +70,15 @@ class ProcessBuilder {
         }
         
         const uberModArr = modObj.fMods.concat(modObj.lMods)
-        let args = this.constructJVMArguments(uberModArr, tempNativePath)
+        // Keep native libraries private to this game process, even when another launcher opens.
+        const tempNativePath = fs.mkdtempSync(path.join(os.tmpdir(), 'sttadyu-natives-'))
+        let args
+        try {
+            args = this.constructJVMArguments(uberModArr, tempNativePath)
+        } catch(error) {
+            fs.removeSync(tempNativePath)
+            throw error
+        }
 
         if(mcVersionAtLeast('1.13', this.server.rawServer.minecraftVersion)){
             //args = args.concat(this.constructModArguments(modObj.fMods))

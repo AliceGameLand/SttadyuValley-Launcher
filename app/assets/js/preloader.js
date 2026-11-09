@@ -1,8 +1,5 @@
 /* global document */
 const {ipcRenderer}  = require('electron')
-const fs             = require('fs-extra')
-const os             = require('os')
-const path           = require('path')
 
 const ConfigManager  = require('./configmanager')
 const { DistroAPI }  = require('./distromanager')
@@ -65,12 +62,3 @@ DistroAPI.getDistribution()
 
         onDistroLoad(null)
     })
-
-// Clean up temp dir incase previous launches ended unexpectedly. 
-fs.remove(path.join(os.tmpdir(), ConfigManager.getTempNativeFolder()), (err) => {
-    if(err){
-        logger.warn('Error while cleaning natives directory', err)
-    } else {
-        logger.info('Cleaned natives directory.')
-    }
-})
