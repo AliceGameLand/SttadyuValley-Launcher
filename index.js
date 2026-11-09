@@ -356,7 +356,13 @@ function getPlatformIcon(filename){
     return path.join(__dirname, 'app', 'assets', 'images', `${filename}.${ext}`)
 }
 
-app.on('ready', createWindow)
+app.on('ready', async () => {
+    const wallpaper = require('./app/assets/js/valleywallpaper')
+    await wallpaper.refreshLegacy(app.getPath('userData')).catch(error => {
+        console.warn('Unable to refresh the cached wallpaper:', error.message)
+    })
+    createWindow()
+})
 app.on('ready', createMenu)
 
 app.on('window-all-closed', () => {
