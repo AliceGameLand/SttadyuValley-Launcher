@@ -256,6 +256,7 @@ function createWindow() {
     remoteMain.enable(win.webContents)
 
     const data = {
+        startupWallpaper: require('./app/assets/js/valleywallpaper').localUrl(app.getPath('userData')),
         lang: (str, placeHolders) => LangLoader.queryEJS(str, placeHolders)
     }
     Object.entries(data).forEach(([key, val]) => ejse.data(key, val))

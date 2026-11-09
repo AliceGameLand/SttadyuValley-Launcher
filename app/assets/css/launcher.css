@@ -13,6 +13,7 @@
 
 :root {
     color-scheme: light;
+    --valley-background: radial-gradient(ellipse at 45% 35%, #f8d69b 0%, #dfac68 46%, #a97148 100%);
     --paper: #f6eddd;
     --surface: #fffbef;
     --rail: #efe4cf;
@@ -472,19 +473,29 @@ input { caret-color: var(--blue); accent-color: var(--blue); }
     width: 100%;
     height: 100%;
     overflow: hidden;
-    background: #171b1d;
+    background: var(--valley-background);
 }
 .launcher-starting #frameBar { visibility: hidden; }
 
-/* Reuse the launcher artwork so startup feels like part of the same screen. */
+#loadingWallpaper {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Keep the loading label readable over the selected wallpaper. */
 #loadingContainer::before {
+    z-index: 1;
     position: absolute;
     content: '';
     inset: 0;
-    background: linear-gradient(to top, rgba(13, 18, 17, 0.94), rgba(13, 18, 17, 0.54) 48%, rgba(13, 18, 17, 0.14));
+    background: linear-gradient(to top, rgba(34, 21, 12, 0.88), rgba(34, 21, 12, 0.24) 35%, transparent 70%);
 }
 
 #loadingContent {
+    z-index: 2;
     position: relative;
     display: flex;
     align-items: center;
@@ -1731,7 +1742,7 @@ input:checked + .toggleSwitchSlider:before {
     place-items: center;
     overflow: hidden;
     isolation: isolate;
-    background: radial-gradient(ellipse at 45% 35%, #f8d69b 0%, #dfac68 46%, #a97148 100%);
+    background: var(--valley-background);
 }
 .valley-wallpaper { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1; }
 .valley-hero-logo { width: min(62%, 400px); height: min(94%, 400px); object-fit: contain; filter: drop-shadow(0 12px 18px #48230755); }

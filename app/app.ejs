@@ -17,6 +17,9 @@
     </div>
     <%- include('overlay') %>
     <div id="loadingContainer" role="status" aria-live="polite">
+        <% if (startupWallpaper) { %>
+            <img id="loadingWallpaper" src="<%= startupWallpaper %>" alt="">
+        <% } %>
         <div id="loadingContent">
             <img id="loadCenterImage" src="assets/images/LoadingSeal.png" alt="">
             <div id="loadingCopy">
