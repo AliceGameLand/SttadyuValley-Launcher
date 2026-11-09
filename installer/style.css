@@ -1,5 +1,5 @@
 @font-face { font-family: Pretendard; src: url('assets/PretendardVariable.woff2'); font-weight: 100 900; font-display: swap; }
-:root { color-scheme: light; --paper:#f6eddd; --surface:#fffbef; --rail:#efe4cf; --ink:#31251c; --muted:#62533c; --line:#d6c4a8; --blue:#326b47; --hover:#27563a; --wash:#e3eee2; --danger:#a13c42; --success:#286644; }
+:root { color-scheme: light; --ink:#31251c; --muted:#62533c; --blue:#326b47; --hover:#27563a; --wash:#e3eee2; --danger:#a13c42; --success:#286644; }
 * { box-sizing:border-box; }
 [hidden] { display:none !important; }
 html,body { margin:0; height:100%; overflow:hidden; }

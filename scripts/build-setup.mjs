@@ -30,7 +30,8 @@ const assets = {
     'SealCircle.png': 'app/assets/images/SealCircle.png',
     'PretendardVariable.woff2': 'app/assets/fonts/PretendardVariable.woff2',
     'Pretendard-LICENSE.txt': 'app/assets/fonts/Pretendard-LICENSE.txt',
-    'icon.png': 'build/icon.png'
+    'icon.png': 'build/icon.png',
+    'theme.css': 'app/assets/css/theme.css'
 }
 for(const [name, source] of Object.entries(assets)) fs.copyFileSync(path.join(root, source), path.join(stage, 'assets', name))
 // Remove the artwork left by older two-column setup builds.

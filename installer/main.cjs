@@ -37,7 +37,7 @@ else {
         window = new BrowserWindow({
             width: Math.min(720, area.width - 24), height: Math.min(520, area.height - 24),
             minWidth: 640, minHeight: 480, frame: false, resizable: true,
-            backgroundColor: '#F6EDDD', title: 's\'따듀밸리 설치',
+            backgroundColor: '#f1ede4', title: 's\'따듀밸리 설치',
             icon: path.join(__dirname, 'assets/icon.png'), show: false,
             webPreferences: { preload: path.join(__dirname, 'preload.cjs'), contextIsolation: true, nodeIntegration: false, sandbox: true }
         })

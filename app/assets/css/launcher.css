@@ -13,13 +13,9 @@
 
 :root {
     color-scheme: light;
-    --valley-background: radial-gradient(ellipse at 45% 35%, #f8d69b 0%, #dfac68 46%, #a97148 100%);
-    --paper: #f6eddd;
-    --surface: #fffbef;
-    --rail: #efe4cf;
+    --valley-background: radial-gradient(ellipse at 45% 35%, var(--surface) 0%, var(--rail) 46%, var(--line) 100%);
     --ink: #31251c;
     --muted: #62533c;
-    --line: #d6c4a8;
     --control-line: #8e7c61;
     --blue: #326b47;
     --blue-hover: #27563a;
