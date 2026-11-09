@@ -5,26 +5,30 @@ const path = require('node:path')
 const vm = require('node:vm')
 
 const source = fs.readFileSync(path.join(__dirname, '../app/assets/js/scripts/uibinder.js'), 'utf8')
-for(const [name, accounts, firstLaunch, expected] of [
-    ['First installation opens home and detects Prism', {}, true, 'home'],
-    ['Returning users without accounts reach the import controls', {}, false, 'home'],
-    ['Signed-in users continue to the home screen', { test: {} }, false, 'home']
+for(const [name, account, expected] of [
+    ['First installation opens Microsoft sign-in', null, 'login'],
+    ['Returning users without a selected account open Microsoft sign-in', null, 'login'],
+    ['Signed-in users continue to the home screen', { type: 'microsoft' }, 'home']
 ]){
     test(name, async () => {
         let destination
-        let detected = false
+        let cancelEnabled
         const context = vm.createContext({
             isDev: true, process: { env: {} },
-            ConfigManager: { getAuthAccounts: () => accounts, getSelectedServer: () => 'server', isFirstLaunch: () => firstLaunch },
+            ConfigManager: { getSelectedAccount: () => account, getSelectedServer: () => 'server' },
             VIEWS: { landing: 'home', loginOptions: 'login' },
             prepareSettings: async () => {}, updateSelectedServer(){},
-            detectPrismPack: () => { detected = true },
+            loginOptionsCancelEnabled: enabled => { cancelEnabled = enabled },
             setTimeout: callback => callback(), $: () => ({ show(){} }),
             switchView: (_current, next) => { destination = next }
         })
         vm.runInContext(source.slice(source.indexOf('async function showMainUI('), source.indexOf('function showFatalStartupError(')), context)
         await vm.runInContext('showMainUI({getServerById:()=>({})})', context)
         assert.equal(destination, expected)
-        assert.equal(detected, true)
+        if(!account){
+            assert.equal(cancelEnabled, false)
+            assert.equal(context.loginOptionsViewOnLoginSuccess, 'home')
+            assert.equal(context.loginOptionsViewOnLoginCancel, 'login')
+        }
     })
 }

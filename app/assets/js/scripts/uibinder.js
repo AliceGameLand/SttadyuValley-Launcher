@@ -153,7 +153,7 @@ async function showMainUI(data){
     setTimeout(() => {
         $('#main').show()
 
-        const isLoggedIn = Object.keys(ConfigManager.getAuthAccounts()).length > 0
+        const isLoggedIn = !!ConfigManager.getSelectedAccount()
 
         // If this is enabled in a development environment we'll get ratelimited.
         // The relaunch frequency is usually far too high.
@@ -161,8 +161,13 @@ async function showMainUI(data){
             validateSelectedAccount()
         }
 
-        const next = VIEWS.landing
-        void detectPrismPack()
+        let next = VIEWS.landing
+        if(!isLoggedIn){
+            loginOptionsCancelEnabled(false)
+            loginOptionsViewOnLoginSuccess = VIEWS.landing
+            loginOptionsViewOnLoginCancel = VIEWS.loginOptions
+            next = VIEWS.loginOptions
+        }
 
         // Reveal a painted destination underneath the loading screen.
         switchView(null, next, 0, 0, undefined, () => {

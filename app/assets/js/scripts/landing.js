@@ -25,7 +25,6 @@ const launchDetailsText = document.getElementById('launch_details_text')
 const homeServerList    = document.getElementById('homeServerList')
 const homeServerName    = document.getElementById('homeServerName')
 const homeServerMeta    = document.getElementById('homeServerMeta')
-const homeServerStatus  = document.getElementById('homeServerStatus')
 const openGameFolderButton = document.getElementById('openGameFolderButton')
 const loggerLanding     = LoggerUtil.getLogger('Landing')
 
@@ -35,63 +34,51 @@ let gameFolderOpening = false
 const runningGames = new Map()
 let launchAttempt = 0
 
-const importButton = document.getElementById('valleyImportButton')
-const pickFolder = document.getElementById('valleyPickFolder')
-const loginButton = document.getElementById('valleyLoginButton')
 const packIssues = document.getElementById('valleyPackIssues')
 const packMessage = document.getElementById('valleyPackMessage')
 const missingFiles = document.getElementById('valleyPackMissing')
-let prismFolder
-let importingPack = false
+let failedPrismFolder
 
 const gameDirectory = () => path.join(ConfigManager.getInstanceDirectory(), ConfigManager.getSelectedServer() ?? 'sunlit-valley-4.1.5a')
 
-async function detectPrismPack(){
-    const candidate = SunlitPack.prismDefault()
+async function prepareSunlitPack(){
+    if(SunlitPack.isReady(gameDirectory())) return true
+
+    let prismFolder = SunlitPack.prismDefault()
     try {
-        await SunlitPack.inspectPrism(candidate)
-        prismFolder = candidate
+        await SunlitPack.inspectPrism(prismFolder)
     } catch {
         prismFolder = null
     }
-    refreshLaunchControls()
-}
-
-function openLogin(){
-    loginOptionsCancelEnabled(true)
-    loginOptionsViewOnLoginSuccess = VIEWS.landing
-    loginOptionsViewOnLoginCancel = VIEWS.loginOptions
-    loginOptionsViewOnCancel = VIEWS.landing
-    loginOptionsViewCancelHandler = null
-    switchView(getCurrentView(), VIEWS.loginOptions)
-}
-loginButton.onclick = openLogin
-
-async function importPrism(forcePicker){
-    if(importingPack || launchInProgress || runningGames.size) return
-    importingPack = true
-    refreshLaunchControls()
-    try {
-        if(forcePicker || !prismFolder){
-            const result = await remote.dialog.showOpenDialog(remote.getCurrentWindow(), {
-                title: 'Sunlit Valley 4.1.5A Prism 폴더 선택',
-                defaultPath: prismFolder ?? path.dirname(SunlitPack.prismDefault()),
-                properties: ['openDirectory']
-            })
-            if(result.canceled) return
-            prismFolder = result.filePaths[0]
-        }
-        missingFiles.replaceChildren()
-        packIssues.hidden = false
-        packMessage.textContent = 'Prism 인스턴스를 확인하고 있어요.'
-        await SunlitPack.importPack(prismFolder, gameDirectory(), (phase, done, total) => {
-            packMessage.textContent = phase === 'defaults' ? '공식 팩 기본 설정을 받는 중…'
-                : (phase === 'verify' ? '파일 확인' : '파일 복사') + ' ' + done + ' / ' + total
+    if(!prismFolder || failedPrismFolder){
+        const result = await remote.dialog.showOpenDialog(remote.getCurrentWindow(), {
+            title: 'Sunlit Valley 4.1.5A가 설치된 Prism 인스턴스 선택',
+            defaultPath: failedPrismFolder ?? path.dirname(SunlitPack.prismDefault()),
+            properties: ['openDirectory']
         })
-        packIssues.hidden = true
+        if(result.canceled) return false
+        prismFolder = result.filePaths[0]
+    }
+
+    missingFiles.replaceChildren()
+    packIssues.hidden = true
+    setLaunchDetails('Sunlit Valley 모드팩 준비 중…')
+    try {
+        await SunlitPack.importPack(prismFolder, gameDirectory(), (phase, done, total) => {
+            if(phase === 'defaults'){
+                setLaunchDetails('모드팩 기본 설정을 받는 중…')
+                setLaunchIndeterminate()
+            } else {
+                setLaunchDetails(phase === 'verify' ? '모드팩 파일 확인 중…' : '모드팩 파일 복사 중…')
+                setLaunchPercentage(done * 100 / total)
+            }
+        })
+        failedPrismFolder = undefined
+        return true
     } catch(error) {
+        failedPrismFolder = prismFolder
         packIssues.hidden = false
-        packMessage.textContent = error.message
+        packMessage.textContent = error.message + ' 플레이를 눌러 다시 시도해 주세요.'
         for(const file of error.missing ?? []){
             const item = document.createElement('li')
             const link = document.createElement('a')
@@ -101,13 +88,9 @@ async function importPrism(forcePicker){
             missingFiles.append(item)
         }
         loggerLanding.warn('Sunlit Valley import failed.', error.message)
-    } finally {
-        importingPack = false
-        refreshLaunchControls()
+        return false
     }
 }
-importButton.onclick = () => importPrism(false)
-pickFolder.onclick = () => importPrism(true)
 
 function showValleyWallpaper(){
     const imageUrl = ValleyWallpaper.localUrl(ConfigManager.getLauncherDirectory())
@@ -141,15 +124,7 @@ wallpaperReset.onclick = () => changeWallpaper(false)
 
 function refreshLaunchControls(){
     openGameFolderButton.disabled = gameFolderOpening || ConfigManager.getSelectedServer() == null
-    const ready = SunlitPack.isReady(gameDirectory())
-    const signedIn = !!ConfigManager.getSelectedAccount()
-    launchButton.disabled = launchInProgress || importingPack || runningGames.size > 0 || !ready || !signedIn
-    loginButton.hidden = signedIn
-    importButton.disabled = pickFolder.disabled = importingPack || launchInProgress || runningGames.size > 0
-    importButton.textContent = ready ? 'Prism에서 다시 가져오기' : 'Prism 모드팩 가져오기'
-    pickFolder.hidden = !prismFolder
-    homeServerStatus.dataset.state = ready ? 'online' : 'unknown'
-    homeServerStatus.textContent = ready ? '모드팩 준비 완료' : prismFolder ? 'Prism 인스턴스를 찾았어요' : 'Prism 모드팩 필요'
+    launchButton.disabled = launchInProgress || runningGames.size > 0 || !ConfigManager.getSelectedAccount()
     launchButtonLabel.textContent = Lang.queryJS('landing.launch.play')
     for(const button of homeServerList.querySelectorAll('button')){
         button.disabled = launchInProgress
@@ -198,6 +173,12 @@ launchButton.addEventListener('click', async () => {
     toggleLaunchArea(true)
 
     try {
+        if(!await prepareSunlitPack()){
+            toggleLaunchArea(false)
+            return
+        }
+        setLaunchDetails(Lang.queryJS('landing.launch.pleaseWait'))
+        setLaunchIndeterminate()
         const server = (await DistroAPI.getDistribution()).getServerById(serverId)
         if(server == null){
             showLaunchFailure(Lang.queryJS('landing.launch.failureTitle'), Lang.queryJS('landing.launch.serverUnavailable'))
@@ -385,7 +366,6 @@ function updateSelectedServer(server, distro){
         ? [`Minecraft ${server.rawServer.minecraftVersion}`, loader === Type.ForgeHosted ? Type.Forge : loader].filter(Boolean).join(' · ')
         : ''
     homeServerMeta.hidden = !server
-    homeServerStatus.hidden = !server
     refreshLaunchControls()
     syncLauncherDiscordPresence(distro, server)
     if(inSettings && changed) return animateSettingsTabRefresh()

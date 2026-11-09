@@ -89,13 +89,11 @@ test('A later process startup error leaves an earlier game tracked and permits r
     assert.deepEqual(h.resets, [false])
 })
 
-test('A single profile blocks launch during play, import and preparation', () => {
+test('A single profile blocks play while running, preparing or signed out', () => {
     const button = {}, label = {}, serverButton = {}, pickerButton = {}
     const context = vm.createContext({
         openGameFolderButton: {}, gameFolderOpening: false,
         launchButton: button, launchButtonLabel: label, launchInProgress: false,
-        SunlitPack: { isReady: () => true }, gameDirectory: () => 'fixture',
-        importingPack: false, loginButton: {}, importButton: {}, pickFolder: {}, prismFolder: null, homeServerStatus: { dataset: {} },
         runningGames: new Map([[{}, {}]]), homeDistribution: { servers: [{}] },
         ConfigManager: { getSelectedServer: () => 'one', getSelectedAccount: () => ({}), isServerSelectionRequired: () => false },
         Lang: { queryJS: key => key }, homeServerList: { querySelectorAll: () => [serverButton] },
@@ -108,10 +106,6 @@ test('A single profile blocks launch during play, import and preparation', () =>
     vm.runInContext('refreshLaunchControls()', context)
     assert.equal(button.disabled, false)
     assert.equal(label.textContent, 'landing.launch.play')
-    context.SunlitPack.isReady = () => false
-    vm.runInContext('refreshLaunchControls()', context)
-    assert.equal(button.disabled, true)
-    context.SunlitPack.isReady = () => true
     context.launchInProgress = true
     vm.runInContext('refreshLaunchControls()', context)
     assert.equal(button.disabled, true)

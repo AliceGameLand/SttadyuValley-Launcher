@@ -1739,9 +1739,6 @@ input:checked + .toggleSwitchSlider:before {
 .valley-pack-issues { padding: 12px 24px; background: var(--rail); color: var(--ink); border-top: 1px solid var(--line); }
 .valley-pack-issues ul { margin: 4px 0 0; padding-left: 18px; max-height: 6.5em; overflow: auto; overflow-wrap: anywhere; }
 .valley-pack-issues ul:empty { display: none; }
-#valleyImportButton, #valleyPickFolder, #valleyLoginButton { border-color: var(--line); background: var(--surface); }
-.valley-import-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
-#valleyLoginButton { display: flex; width: min(100%, 200px); margin: 0 0 6px auto; }
 @media (max-width: 760px) { .entry-garden.valley-artwork { display: none; } }
 .valley-wallpaper-settings { margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--line); }
 .valley-wallpaper-settings h2 { font-size: 17px; }
