@@ -1,0 +1,99 @@
+diff --git a/node_modules/helios-core/dist/common/distribution/DistributionFactory.js b/node_modules/helios-core/dist/common/distribution/DistributionFactory.js
+index d2d927f..86bd35e 100644
+--- a/node_modules/helios-core/dist/common/distribution/DistributionFactory.js
++++ b/node_modules/helios-core/dist/common/distribution/DistributionFactory.js
+@@ -196,6 +196,7 @@ class HeliosModule {
+             case helios_distribution_types_1.Type.Forge:
+             case helios_distribution_types_1.Type.ForgeHosted:
+             case helios_distribution_types_1.Type.Fabric:
++            case helios_distribution_types_1.Type.NeoForge:
+             case helios_distribution_types_1.Type.LiteLoader:
+                 return (0, path_1.join)(commonDir, 'libraries', relativePath);
+             case helios_distribution_types_1.Type.ForgeMod:
+diff --git a/node_modules/helios-core/dist/dl/AssetGaurdTransmitter.js b/node_modules/helios-core/dist/dl/AssetGaurdTransmitter.js
+index 554077d..30f3365 100644
+--- a/node_modules/helios-core/dist/dl/AssetGaurdTransmitter.js
++++ b/node_modules/helios-core/dist/dl/AssetGaurdTransmitter.js
+@@ -84,6 +84,7 @@ class FullRepair extends BaseTransmitter {
+             this.receiver.on('message', onMessageHandle);
+             this.receiver.send({
+                 action: 'validate',
++                cacheModule: this.validationCacheModule,
+                 commonDirectory: this.commonDirectory,
+                 instanceDirectory: this.instanceDirectory,
+                 launcherDirectory: this.launcherDirectory,
+diff --git a/node_modules/helios-core/dist/dl/DownloadEngine.js b/node_modules/helios-core/dist/dl/DownloadEngine.js
+index 922cd1a..11eb5f0 100644
+--- a/node_modules/helios-core/dist/dl/DownloadEngine.js
++++ b/node_modules/helios-core/dist/dl/DownloadEngine.js
+@@ -65,6 +65,7 @@ async function downloadQueue(assets, onProgress) {
+     return receivedTotals;
+ }
+ async function downloadFile(url, path, onProgress) {
++    if (process.env.ALICE_DOWNLOAD_MODULE) return require(process.env.ALICE_DOWNLOAD_MODULE).downloadFile(url, path, onProgress);
+     await (0, fs_extra_1.ensureDir)((0, path_1.dirname)(path));
+     const MAX_RETRIES = 10;
+     let fileWriterStream = null; // The write stream.
+diff --git a/node_modules/helios-core/dist/dl/distribution/DistributionIndexProcessor.js b/node_modules/helios-core/dist/dl/distribution/DistributionIndexProcessor.js
+index f09b6b4..031b8c9 100644
+--- a/node_modules/helios-core/dist/dl/distribution/DistributionIndexProcessor.js
++++ b/node_modules/helios-core/dist/dl/distribution/DistributionIndexProcessor.js
+@@ -67,12 +67,13 @@ class DistributionIndexProcessor extends IndexProcessor_1.IndexProcessor {
+         if (server == null) {
+             throw new AssetGuardError_1.AssetGuardError(`Invalid server id ${this.serverId}`);
+         }
+-        const modLoaderModule = server.modules.find(({ rawModule: { type } }) => type === helios_distribution_types_1.Type.ForgeHosted || type === helios_distribution_types_1.Type.Forge || type === helios_distribution_types_1.Type.Fabric);
++        const modLoaderModule = server.modules.find(({ rawModule: { type } }) => type === helios_distribution_types_1.Type.ForgeHosted || type === helios_distribution_types_1.Type.Forge || type === helios_distribution_types_1.Type.Fabric || type === helios_distribution_types_1.Type.NeoForge);
+         if (modLoaderModule == null) {
+             throw new AssetGuardError_1.AssetGuardError('No mod loader found!');
+         }
+         if (modLoaderModule.rawModule.type === helios_distribution_types_1.Type.Fabric
+-            || DistributionIndexProcessor.isForgeGradle3(server.rawServer.minecraftVersion, modLoaderModule.getMavenComponents().version)) {
++            || modLoaderModule.rawModule.type === helios_distribution_types_1.Type.NeoForge
++            || (modLoaderModule.subModules.length > 0 && DistributionIndexProcessor.isForgeGradle3(server.rawServer.minecraftVersion, modLoaderModule.getMavenComponents().version))) {
+             return await this.loadVersionManifest(modLoaderModule);
+         }
+         else {
+diff --git a/node_modules/helios-core/dist/dl/receivers/FullRepairReceiver.js b/node_modules/helios-core/dist/dl/receivers/FullRepairReceiver.js
+index 89fe157..0e7b166 100644
+--- a/node_modules/helios-core/dist/dl/receivers/FullRepairReceiver.js
++++ b/node_modules/helios-core/dist/dl/receivers/FullRepairReceiver.js
+@@ -16,7 +16,16 @@ class FullRepairReceiver {
+         // Route to the correct function
+         switch (message.action) {
+             case 'validate':
+-                await this.validate(message);
++                if (message.cacheModule) {
++                    const cache = await require(message.cacheModule).createValidationCache(message.launcherDirectory, message.serverId);
++                    this.validationCache = cache;
++                    const original = FileUtils_1.validateLocalFile;
++                    FileUtils_1.validateLocalFile = cache.wrap(original);
++                    try { await this.validate(message); }
++                    finally { FileUtils_1.validateLocalFile = original; this.validationCache = null; }
++                } else {
++                    await this.validate(message);
++                }
+                 break;
+             case 'download':
+                 await this.download(message);
+@@ -85,6 +94,7 @@ class FullRepairReceiver {
+                 .forEach(asset => assets.push(asset));
+         }
+         this.assets = assets;
++        if (this.validationCache) await this.validationCache.save();
+         process.send({ response: 'validateComplete', invalidCount: this.assets.length });
+     }
+     // eslint-disable-next-line @typescript-eslint/no-unused-vars
+diff --git a/node_modules/helios-core/dist/dl/receivers/ReceiverExecutor.js b/node_modules/helios-core/dist/dl/receivers/ReceiverExecutor.js
+index 5f00414..f9a1c85 100644
+--- a/node_modules/helios-core/dist/dl/receivers/ReceiverExecutor.js
++++ b/node_modules/helios-core/dist/dl/receivers/ReceiverExecutor.js
+@@ -42,7 +42,7 @@ process.on('message', async (message) => {
+         (0, fs_1.fsyncSync)(process.stdout.fd);
+         process.send({
+             response: 'error',
+-            displayable
++            displayable: displayable || err.message || 'File operation failed'
+         });
+         // Current executor behavior is to terminate on first error.
+         // In theory, if an unhandled error reaches here the process failed.

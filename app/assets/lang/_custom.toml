@@ -1,0 +1,20 @@
+# Custom Language File for Launcher Customizer
+
+[ejs.app]
+title = "s'따듀밸리"
+
+[ejs.settings]
+sourceGithubLink = "https://github.com/AliceGameLand/SttadyuValley-Launcher"
+supportLink = "https://github.com/AliceGameLand/SttadyuValley-Launcher/issues"
+
+[ejs.welcome]
+welcomeHeader = "s'따듀밸리에 오신 것을 환영합니다"
+welcomeDescription = "선택한 서버에 맞춰 Minecraft와 필요한 모드를 준비합니다. Microsoft 계정으로 로그인해 시작하세요."
+welcomeDescCTA = "몇 번의 클릭이면 모험을 시작할 수 있어요."
+
+[js.landing.dlAsync]
+installingForge = "Forge 클라이언트를 준비하는 중..."
+
+[js.loginOptions]
+azureNotConfiguredTitle = "Microsoft 로그인 설정 필요"
+azureNotConfiguredDescription = "정식 배포 전에 본인 소유 Entra 앱의 Client ID를 런처 설정에 등록해야 합니다."

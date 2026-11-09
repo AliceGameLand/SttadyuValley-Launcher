@@ -1,0 +1,335 @@
+[ejs.app]
+close = "Close"
+minimize = "Minimize"
+resize = "Maximize or restore"
+loading = "Preparing the launcher…"
+
+[ejs.landing]
+updateAvailableTooltip = "Update"
+usernamePlaceholder = "Minecraft account"
+usernameEditButton = "Account settings"
+settingsTooltip = "Settings"
+launchButton = "Play"
+launchDetails = "Preparing the game…"
+serversHeading = "Servers"
+serverSetupTitle = "Choose a server to play"
+serverSetupDescription = "You can change your server from Home anytime."
+serverSetupEmpty = "No servers are available."
+openGameFolder = "Open game folder"
+reportIssue = "Report an issue"
+reportIssueHint = "Open the issue page in your browser"
+launcherVersion = "Launcher"
+loadingServer = "Loading servers…"
+artDescription = "Alice and a rabbit in the garden in front of the castle"
+
+[ejs.loginOptions]
+welcomeTitle = "Welcome to Sttadyu Valley"
+signInDescription = "Sign in with your Microsoft account to start."
+playDescription = "Create joyful moments together with Alice."
+loginOptionsTitle = "Login Options"
+loginWithMicrosoft = "Login with Microsoft"
+cancelButton = "Cancel"
+
+[ejs.overlay]
+launchFailureDetails = "Error details"
+launchFailureCopy = "Copy error details"
+launchFailureClose = "Close"
+launchFailureRetry = "Try again"
+serverSelectHeader = "Available Servers"
+serverSelectConfirm = "Select"
+serverSelectCancel = "Cancel"
+accountSelectHeader = "Select an Account"
+accountSelectConfirm = "Select"
+accountSelectCancel = "Cancel"
+
+[ejs.settings]
+navHeaderText = "Settings"
+navAccount = "Account"
+navMinecraft = "Minecraft"
+navMods = "Mods"
+navJava = "Java"
+navLauncher = "Launcher"
+navAbout = "About"
+navUpdates = "Updates"
+navDone = "Save and close"
+serviceStatus = "Authentication service status"
+noServers = "No servers are available."
+gameWidthLabel = "Width"
+gameHeightLabel = "Height"
+tabAccountHeaderText = "Account Settings"
+tabAccountHeaderDesc = "Add new accounts or manage existing ones."
+microsoftAccount = "Microsoft"
+addMicrosoftAccount = "+ Add Microsoft Account"
+minecraftTabHeaderText = "Minecraft Settings"
+minecraftTabHeaderDesc = "Options related to game launch."
+gameResolutionTitle = "Game Resolution"
+resolutionError = "Enter a whole number of zero or more for width and height."
+validationHint = "Check your input values"
+launchFullscreenTitle = "Fullscreen"
+autoConnectTitle = "Connect to server automatically"
+launchDetachedTitle = "Run game independently"
+launchDetachedDesc = "If the game is not detached, closing the launcher will also close the game."
+tabModsHeaderText = "Mod Settings"
+tabModsHeaderDesc = "Manage mods and shader packs for each server."
+switchServerButton = "Switch"
+modsSwitchServer = "Switch server"
+requiredMods = "Required Mods"
+requiredModsNote = "Server files are prepared when you play."
+optionalMods = "Optional Mods"
+noOptionalMods = "This server has no managed mods you can turn on or off."
+dropinMods = "Drop-in Mods"
+addMods = "Open mods folder"
+dropinRefreshNote = "Add files to the folder, then press F5 to refresh the list."
+noLocalMods = "There are no mod files to show."
+shaderpacks = "Shader Packs"
+shaderpackDesc = "Choose a shader pack to use. Shaders can affect game performance."
+selectShaderpack = "Choose a shader pack"
+openShaderpackFolder = "Open shader packs folder"
+tabJavaHeaderText = "Java Settings"
+tabJavaHeaderDesc = "Manage the Java configuration (advanced)."
+memoryTitle = "Memory"
+maxRAM = "Maximum RAM"
+minRAM = "Minimum RAM"
+memoryDesc = "The recommended minimum RAM is 3 gigabytes. Setting the minimum and maximum values to the same value may reduce lag."
+memoryTotalTitle = "Total"
+memoryAvailableTitle = "Available"
+javaExecutableTitle = "Java Executable"
+javaExecSelDialogTitle = "Select Java Executable"
+javaExecSelButtonText = "Choose File"
+javaExecDesc = "The Java executable is validated before game launch."
+javaPathDesc = "The path should end with <strong>{pathSuffix}</strong>."
+jvmOptsTitle = "Additional JVM Options"
+jvmOptsDesc = "Options to be provided to the JVM at runtime. <em>-Xms</em> and <em>-Xmx</em> should not be included."
+launcherTabHeaderText = "Launcher Settings"
+launcherTabHeaderDesc = "Manage updates and the file storage location."
+allowPrereleaseTitle = "Pre-release updates"
+allowPrereleaseDesc = "Pre-Releases include new features which may have not been fully tested or integrated.<br>This will always be true if you are using a pre-release version."
+dataDirectoryTitle = "Data Directory"
+selectDataDirectory = "Select Data Directory"
+chooseFolder = "Choose Folder"
+dataDirectoryDesc = "All game files and local Java installations will be stored in the data directory.<br>Screenshots and world saves are stored in the instance folder for the corresponding server configuration."
+aboutTabHeaderText = "About"
+aboutTabHeaderDesc = "View information and release notes for the current version."
+aboutTitle = "{appName}"
+stableRelease = "Stable Release"
+versionText = "Version "
+sourceGithub = "Source (GitHub)"
+support = "Support"
+devToolsConsole = "DevTools Console"
+releaseNotes = "Release Notes"
+changelog = "Changelog"
+noReleaseNotes = "No Release Notes"
+viewReleaseNotes = "View Release Notes on GitHub"
+launcherUpdatesHeaderText = "Launcher Updates"
+launcherUpdatesHeaderDesc = "Download, install, and review updates for the launcher."
+checkForUpdates = "Check for Updates"
+whatsNew = "What's New"
+updateReleaseNotes = "Update Release Notes"
+
+[ejs.waiting]
+waitingText = "Waiting for Microsoft.."
+
+[ejs.welcome]
+continueButton = "CONTINUE"
+
+
+[js.discord]
+launcher = "Waiting in the launcher"
+waiting = "Starting the game.."
+state = "Server: {shortId}"
+
+[js.index]
+microsoftLoginTitle = "Microsoft Login"
+microsoftLogoutTitle = "Microsoft Logout"
+
+[js.landing.tools]
+folderErrorTitle = "Unable to open the game folder"
+folderErrorMessage = "Check the folder location and access permissions, then try again."
+
+[js.landing.launch]
+serverUnavailable = "The selected server is unavailable. Choose a server and try again."
+accountRequired = "Sign in with a Microsoft account in Account Settings and try again."
+pleaseWait = "Please wait.."
+failureTitle = "Error During Launch"
+failureText = "The game could not start. Try again. If this keeps happening, copy the error details and include them in a problem report."
+play = "Play"
+additionalPlay = "Launch another"
+diagnosticCopied = "Copied"
+bundledJavaMissingTitle = "Bundled Java Not Found"
+bundledJavaMissingText = "The launcher installation is damaged. Reinstall the latest launcher version."
+bundledJavaInvalidTitle = "Bundled Java Error"
+bundledJavaInvalidText = "The bundled Java 17 runtime is damaged. Reinstall the latest launcher version."
+okay = "Okay"
+
+[js.landing.selectedAccount]
+noAccountSelected = "No Account Selected"
+
+[js.landing.selectedServer]
+noSelection = "No Server Selected"
+loading = "Loading.."
+
+[js.landing.serverStatus]
+checking = "Checking status…"
+unavailable = "Status unavailable"
+population = "{online}/{max} online"
+
+[js.landing.services]
+green = "Operational"
+yellow = "Degraded"
+red = "Outage"
+grey = "Unknown"
+
+[js.landing.systemScan]
+checking = "Checking system info.."
+noCompatibleJava = "No Compatible<br>Java Installation Found"
+installJavaMessage = "In order to launch Minecraft, you need a 64-bit installation of Java {major}. Would you like us to install a copy?"
+installJava = "Install Java"
+installJavaManually = "Install Manually"
+javaDownloadPrepare = "Preparing Java Download.."
+javaDownloadFailureTitle = "Error During Java Download"
+javaDownloadFailureText = "See console (CTRL + Shift + i) for more details."
+javaRequired = "Java is Required<br>to Launch"
+javaRequiredMessage = 'A valid x64 installation of Java {major} is required to launch.<br><br>Please refer to our <a href="https://github.com/dscalzi/HeliosLauncher/wiki/Java-Management#manually-installing-a-valid-version-of-java">Java Management Guide</a> for instructions on how to manually install Java.'
+javaRequiredDismiss = "I Understand"
+javaRequiredCancel = "Go Back"
+
+[js.landing.downloadJava]
+findJdkFailure = "Failed to find OpenJDK distribution."
+javaDownloadCorruptedError = "Downloaded JDK has a bad hash, the file may be corrupted."
+extractingJava = "Extracting Java"
+javaInstalled = "Java Installed!"
+
+[js.landing.dlAsync]
+retryFilePreparation = "Could not prepare game files. Check your connection and available disk space, then try again."
+loadingServerInfo = "Loading server information.."
+fatalError = "Fatal Error"
+unableToLoadDistributionIndex = "Could not load the server information. Check your connection, then try again."
+pleaseWait = "Please wait.."
+errorDuringLaunchTitle = "Error During Launch"
+seeConsoleForDetails = "See console (CTRL + Shift + i) for more details."
+validatingFileIntegrity = "Validating file integrity.."
+errorDuringFileVerificationTitle = "Error During File Verification"
+downloadingFiles = "Downloading files.."
+errorDuringFileDownloadTitle = "Error During File Download"
+preparingToLaunch = "Preparing to launch.."
+launchingGame = "Launching game.."
+launchWrapperNotDownloaded = "A required game file is missing. Try again to check the files. If the problem continues, include the error details in a problem report."
+doneEnjoyServer = "Done. Enjoy the server!"
+checkConsoleForDetails = "Please check the console (CTRL + Shift + i) for more details."
+
+[js.landing.discord]
+loading = "Loading game.."
+joining = "Joining server.."
+joined = "Playing Minecraft"
+
+[js.overlay]
+dismiss = "Dismiss"
+
+[js.settings.fileSelectors]
+executables = "Executables"
+allFiles = "All Files"
+
+[js.settings.mstfLogin]
+errorTitle = "Something Went Wrong"
+errorMessage = "Microsoft authentication failed. Please try again."
+okButton = "OK"
+
+[js.settings.mstfLogout]
+errorTitle = "Something Went Wrong"
+errorMessage = "Microsoft logout failed. Please try again."
+okButton = "OK"
+
+[js.settings.authAccountSelect]
+selectButton = "Select Account"
+selectedButton = "Selected Account &#10004;"
+
+[js.settings.authAccountLogout]
+lastAccountWarningTitle = "Warning<br>This is Your Last Account"
+lastAccountWarningMessage = "In order to use the launcher you must be logged into at least one account. You will need to login again after.<br><br>Are you sure you want to log out?"
+confirmButton = "I'm Sure"
+cancelButton = "Cancel"
+
+[js.settings.authAccountPopulate]
+username = "Username"
+uuid = "UUID"
+selectAccount = "Select Account"
+selectedAccount = "Selected Account ✓"
+logout = "Log Out"
+
+[js.settings.dropinMods]
+removeButton = "Remove"
+removeLabel = "Remove {name}"
+deleteFailedTitle = "Failed to Delete<br>Drop-in Mod {fullName}"
+deleteFailedMessage = "Make sure the file is not in use and try again."
+failedToggleTitle = "Failed to Toggle<br>One or More Drop-in Mods"
+okButton = "Okay"
+
+[js.settings.mods]
+requiredState = "Always on"
+shaderpackOff = "Off (default)"
+
+[js.settings.serverListing]
+mainServer = "Main Server"
+
+[js.settings.java]
+selectedJava = "Selected: Java {version} ({vendor})"
+bundledJava = "Bundled Java {version} ({vendor})"
+bundledJavaMissing = "The bundled Java runtime could not be found."
+invalidSelection = "Invalid Selection"
+requiresJava = "Requires Java {major} x64."
+availableOptions = "Available Options for Java {major} (HotSpot VM)"
+
+[js.settings.about]
+preReleaseTitle = "Pre-release"
+stableReleaseTitle = "Stable Release"
+releaseNotesFailed = "Failed to load release notes."
+
+[js.settings.updates]
+checkUpdatesTitle = "Check for updates"
+latestVersionButton = "Up to date · Check again"
+checkFailedTitle = "Unable to check for updates"
+retryButton = "Check failed · Retry"
+newReleaseTitle = "New Release Available"
+newPreReleaseTitle = "New Pre-release Available"
+downloadingButton = "Downloading.."
+startDownloadButton = "Download"
+downloadButton = 'Download from GitHub<span style="font-size: 10px;color: gray;text-shadow: none !important;">Close the launcher and run the dmg to update.</span>'
+latestVersionTitle = "You Are Running the Latest Version"
+checkForUpdatesButton = "Check for Updates"
+checkingForUpdatesButton = "Checking for Updates.."
+
+[js.settings.msftLogin]
+deniedTitle = "Sign-in was not completed"
+deniedMessage = "Access was not granted during Microsoft sign-in. Please sign in again."
+errorTitle = "Microsoft Login Failed"
+errorMessage = "We were unable to authenticate your Microsoft account. Please try again."
+okButton = "OK"
+
+[js.uibinder.startup]
+fatalErrorTitle = "Fatal Error: Unable to Load Distribution Index"
+fatalErrorMessage = "A connection could not be established to our servers to download the distribution index. No local copies were available to load. <br><br>The distribution index is an essential file which provides the latest server information. The launcher is unable to start without it. Ensure you are connected to the internet and relaunch the application."
+closeButton = "Close"
+
+[js.uibinder.validateAccount]
+failedMessageTitle = "Failed to Refresh Login"
+failedMessage = "We were unable to refresh the login for <strong>{account}</strong>. Please select another account or login again."
+failedMessageSelectAnotherAccount = "We were unable to refresh the login for <strong>{account}</strong>. Please login again."
+loginButton = "Login"
+selectAnotherAccountButton = "Select Another Account"
+
+[js.uicore.autoUpdate]
+checkingForUpdateButton = "Checking for Updates..."
+installNowButton = "Install Now"
+checkForUpdatesButton = "Check for Updates"
+
+[js.auth.microsoft.error]
+noProfileTitle = "Error During Login:<br>Profile Not Set Up"
+noProfileDesc = "Your Microsoft account does not yet have a Minecraft profile set up. If you have recently purchased the game or redeemed it through Xbox Game Pass, you have to set up your profile on <a href=\"https://minecraft.net/\">Minecraft.net</a>.<br><br>If you have not yet purchased the game, you can also do that on <a href=\"https://minecraft.net/\">Minecraft.net</a>."
+noXboxAccountTitle = "Error During Login:<br>No Xbox Account"
+noXboxAccountDesc = "Your Microsoft account has no Xbox account associated with it."
+xblBannedTitle = "Error During Login:<br>Xbox Live Unavailable"
+xblBannedDesc = "Your Microsoft account is from a country where Xbox Live is not available or banned."
+under18Title = "Error During Login:<br>Parental Approval Required"
+under18Desc = "Accounts for users under the age of 18 must be added to a Family by an adult."
+unknownTitle = "Unknown Error During Login"
+unknownDesc = "An unknown error has occurred. Please see the console for details."

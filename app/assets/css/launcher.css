@@ -1,0 +1,1748 @@
+@font-face {
+    font-family: 'Avenir Medium';
+    src: url('../fonts/Avenir-Medium.ttf');
+}
+
+@font-face {
+    font-family: 'Pretendard Variable';
+    src: url('../fonts/PretendardVariable.woff2') format('woff2');
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+:root {
+    color-scheme: light;
+    --paper: #f6eddd;
+    --surface: #fffbef;
+    --rail: #efe4cf;
+    --ink: #31251c;
+    --muted: #62533c;
+    --line: #d6c4a8;
+    --control-line: #8e7c61;
+    --blue: #525d30;
+    --blue-hover: #424a26;
+    --blue-wash: #e6e9d1;
+    --focus: #6f3d23;
+    --success: #286644;
+    --warning: #82550e;
+    --danger: #a13c42;
+    --on-blue: #ffffff;
+    --radius: 12px;
+    --frame-height: 48px;
+    --ui-font: 'Pretendard Variable', "Malgun Gothic", "Apple SD Gothic Neo", system-ui, sans-serif;
+    --nav-width: clamp(220px, 21vw, 268px);
+    --section-gap: 24px;
+    --ease: 160ms ease-out;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { width: 100%; height: 100%; margin: 0; }
+body {
+    color: var(--ink);
+    background: var(--paper);
+    font: 14px/1.5 var(--ui-font);
+    scrollbar-color: #a6a39b transparent;
+    -webkit-user-select: none;
+}
+button, input, select { font: inherit; }
+button { cursor: pointer; }
+button:disabled { cursor: default; }
+h1, h2, p { margin: 0; }
+a { color: var(--blue); text-underline-offset: 3px; }
+input { caret-color: var(--blue); accent-color: var(--blue); }
+::selection { color: var(--ink); background: var(--blue-wash); }
+:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+}
+#main {
+    position: relative;
+    display: none;
+    height: calc(100% - var(--frame-height));
+}
+
+.primary-button,
+.quiet-button,
+#overlayContainer .overlayKeybindEnter,
+#overlayContainer .overlayKeybindEsc {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 40px;
+    padding: 7px 14px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    font-weight: 600;
+    line-height: 1.35;
+    transition: background-color var(--ease), color var(--ease), transform 120ms ease-out;
+}
+.primary-button,
+#overlayContainer .overlayKeybindEnter {
+    background: var(--blue);
+    color: var(--on-blue);
+}
+.primary-button:hover:not(:disabled),
+#overlayContainer .overlayKeybindEnter:hover:not(:disabled) { background: var(--blue-hover); }
+@media (prefers-reduced-motion: no-preference) {
+    :is(.primary-button, .quiet-button, .overlayKeybindEnter, .overlayKeybindEsc):active:enabled {
+        transform: translateY(1px);
+    }
+}
+.primary-button:disabled,
+#overlayContainer .overlayKeybindEnter:disabled { background: var(--rail); color: var(--muted); }
+.quiet-button, #overlayContainer .overlayKeybindEsc {
+    color: var(--ink);
+    background: transparent;
+}
+.quiet-button:hover:not(:disabled), #overlayContainer .overlayKeybindEsc:hover { background: var(--rail); }
+
+#frameBar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    height: var(--frame-height);
+    padding-left: 16px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+    -webkit-app-region: drag;
+}
+#frameBar.frame-mac { padding: 0 14px; }
+.frame-brand, .frame-home-actions, .frame-controls {
+    display: flex;
+    align-items: center;
+    flex: none;
+}
+.frame-brand { gap: 8px; min-width: 0; font-size: 15px; font-weight: 650; }
+.frame-brand img { flex: none; object-fit: contain; }
+.frame-spacer { flex: 1; }
+.frame-home-actions { gap: 4px; min-width: 0; }
+.frame-home-actions button { min-height: 36px; padding: 6px 10px; font-size: 14px; white-space: nowrap; }
+.frame-settings-icon { width: 16px; height: 16px; }
+#launcherUpdateButton { color: var(--blue); background: var(--blue-wash); }
+.frame-home-actions, .frame-controls { -webkit-app-region: no-drag; }
+#avatarContainer {
+    width: 22px;
+    height: 22px;
+    flex: none;
+    background: transparent url("../images/icons/profile.svg") center / contain no-repeat;
+}
+#user_text { max-width: 126px; overflow: hidden; text-overflow: ellipsis; }
+.frame-controls { align-self: stretch; }
+.frameButton, .frameButtonDarwin { border: 0; background: transparent; color: var(--ink); }
+.frameButton { appearance: none; width: 38px; height: 100%; align-self: stretch; display: grid; place-items: center; padding: 0; border-radius: 0; transition: background-color var(--ease), color var(--ease); }
+.frameButton svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.25; }
+.frameButton:hover { background: var(--rail); }
+.frameButton.fCb:hover { background: var(--danger); color: var(--on-blue); }
+.frameButton:focus-visible { outline-offset: -4px; }
+#frameButtonDockDarwin { gap: 8px; }
+.frameButtonDarwin { width: 13px; height: 13px; padding: 0; border-radius: 50%; }
+.frameButtonDarwin.fCb { background: #e85955; }
+.frameButtonDarwin.fMb { background: #e7ad38; }
+.frameButtonDarwin.fRb { background: #48a95c; }
+
+#landingContainer {
+    display: grid;
+    grid-template-columns: clamp(240px, 20vw, 260px) minmax(0, 1fr);
+    height: 100%;
+    overflow: hidden;
+}
+.home-rail {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+    padding: 28px 16px;
+    background: var(--rail);
+    border-right: 1px solid var(--line);
+}
+.home-rail h2 { flex: none; margin: 0 14px 16px; font-size: 20px; font-weight: 700; }
+.home-server-list { display: flex; flex-direction: column; gap: 4px; min-height: 0; overflow: auto; padding: 4px; }
+.server-setup { width: min(100%, 540px); }
+.server-setup h1 { margin: 0 0 8px; font-size: 26px; line-height: 1.4; font-weight: 750; word-break: keep-all; }
+.server-setup-description { color: var(--muted); font-size: 15px; line-height: 1.65; }
+.server-setup-list { display: grid; gap: 8px; margin-top: 24px; }
+.server-setup-list .home-server { width: 100%; max-width: none; height: auto; min-height: 66px; padding: 14px 18px; gap: 14px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); font-size: 17px; line-height: 25px; font-weight: 600; }
+.server-setup-list .home-server img { width: 36px; height: 36px; }
+.server-setup-list .home-server:hover { color: var(--blue); border-color: var(--blue); background: var(--blue-wash); }
+.server-setup-list .home-server span { flex: 1; white-space: normal; word-break: keep-all; }
+.server-setup-list .home-server svg { flex: none; width: 16px; height: 16px; fill: none; stroke: var(--muted); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.home-rail-tools {
+    flex: none;
+    margin-top: auto;
+    padding: 12px 0 0;
+    border-top: 1px solid var(--line);
+}
+.rail-tool {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    height: 40px;
+    min-height: 40px;
+    padding: 0 14px;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--muted);
+    font-size: 14px;
+    font-weight: 500;
+    text-align: left;
+    text-decoration: none;
+    transition: background-color var(--ease), color var(--ease);
+}
+.rail-tool:hover:not(:disabled) { background: var(--surface); color: var(--blue); }
+.rail-tool:disabled { opacity: 0.55; }
+.rail-report-row { display: flex; align-items: center; gap: 4px; height: 40px; }
+.rail-report-row .rail-tool { flex: 1; min-width: 0; width: auto; }
+#homeLauncherVersion { display: flex; flex: none; align-items: center; height: 40px; padding-right: 14px; color: var(--muted); font-size: 14px; font-weight: 450; line-height: 20px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.rail-tool svg {
+    flex: none;
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+.home-server {
+    position: relative;
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    min-width: 0;
+    min-height: 60px;
+    padding: 10px;
+    color: var(--ink);
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    text-align: left;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.45;
+    transition: background-color var(--ease);
+}
+.home-server img, .serverListingImg, .accountListing img {
+    width: 38px;
+    height: 38px;
+    flex: none;
+    object-fit: cover;
+    border-radius: 6px;
+    background: var(--rail);
+}
+.home-server span { flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.home-server img { width: 32px; height: 32px; object-fit: contain; background: transparent; }
+.home-server:hover:where(:enabled) { background: var(--paper); }
+.home-server[aria-pressed="true"] {
+    background: var(--surface);
+    color: var(--blue);
+    font-weight: 650;
+}
+.home-server[aria-pressed="true"]::before {
+    content: "";
+    position: absolute;
+    inset: 50% auto auto 3px;
+    height: 24px;
+    transform: translateY(-50%);
+    width: 3px;
+    border-radius: 2px;
+    background: var(--blue);
+}
+.home-server:disabled { color: var(--muted); }
+.home-stage {
+    display: flex;
+    min-width: 0;
+    min-height: 0;
+    padding: 0;
+    overflow: hidden;
+}
+.home-edition {
+    display: flex;
+    flex-direction: column;
+    align-self: stretch;
+    width: 100%;
+    height: 100%;
+    max-height: 100%;
+    min-height: 0;
+    margin: 0;
+    border-radius: 0;
+    background: var(--surface);
+    border: 0;
+}
+.home-illustration {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    border-radius: 0;
+}
+.home-art {
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: cover;
+    object-position: center 65%;
+    filter: brightness(0.96) saturate(1.06) contrast(1.02);
+}
+.home-summary {
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px 24px;
+    min-height: 112px;
+    padding: 20px 24px;
+    border-top: 1px solid var(--line);
+}
+.home-server-copy {
+    display: grid;
+    flex: 1;
+    min-width: 0;
+    gap: 6px;
+}
+.home-server-facts { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px; }
+.home-server-copy h1 {
+    font-size: 24px;
+    font-weight: 750;
+    letter-spacing: -0.025em;
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+    word-break: keep-all;
+}
+.home-server-meta, .home-server-status { color: var(--muted); font-size: 14px; line-height: 20px; }
+.home-server-meta { font-weight: 450; }
+.home-server-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-variant-numeric: tabular-nums;
+    font-weight: 550;
+}
+.home-server-status::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+}
+.home-server-status[data-state="online"], #mojangServiceList [data-state="green"] { color: var(--success); }
+#mojangServiceList [data-state="yellow"] { color: var(--warning); }
+#mojangServiceList [data-state="red"] { color: var(--danger); }
+.home-action { flex: 0 0 240px; min-width: 0; }
+#launch_content { display: flex; align-items: center; justify-content: flex-end; }
+#launch_button { width: 200px; max-width: 100%; min-height: 56px; font-size: 16px; }
+#launch_button svg { width: 17px; height: 17px; }
+#launch_details { display: flex; flex-direction: column; justify-content: center; min-height: 48px; width: 100%; min-width: 0; }
+#launch_details:not([hidden]) { animation: launcher-reveal 180ms ease-out; }
+.launch-readout {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+    color: var(--muted);
+    font-size: 14px;
+}
+#launch_details_text { font-weight: 600; }
+#launch_progress_label { color: var(--blue); font-weight: 700; font-variant-numeric: tabular-nums; }
+#launch_progress { display: block; width: 100%; height: 7px; margin-top: 8px; appearance: none; }
+#launch_progress::-webkit-progress-bar { border-radius: 5px; background: var(--blue-wash); }
+#launch_progress::-webkit-progress-value { border-radius: 5px; background: var(--blue); }
+#launch_progress:indeterminate { opacity: 0; }
+.launch-pending-track { display: none; }
+#launch_progress:indeterminate + .launch-pending-track { display: block; height: 7px; margin-top: -7px; overflow: hidden; border-radius: 5px; background: var(--blue-wash); }
+.launch-pending-track::before { content: ''; display: block; width: 35%; height: 100%; border-radius: inherit; background: var(--blue); animation: launch-pending 1.6s ease-in-out infinite alternate; }
+@keyframes launch-pending {
+    from { transform: translateX(0); }
+    to { transform: translateX(186%); }
+}
+
+.entry-view {
+    display: grid;
+    place-items: safe center;
+    height: 100%;
+    overflow: auto;
+    padding: 28px 20px;
+}
+.entry-panel {
+    width: min(100%, 470px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    padding: 36px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--surface);
+    text-align: center;
+}
+.entry-panel h1 {
+    font-size: 25px;
+    line-height: 1.25;
+    letter-spacing: -0.025em;
+    text-wrap: balance;
+    word-break: keep-all;
+    overflow-wrap: anywhere;
+}
+.entry-panel p { color: var(--muted); line-height: 1.65; text-wrap: pretty; }
+.entry-mascot { object-fit: contain; }
+.entry-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(300px, 1fr);
+    align-items: center;
+    gap: 24px;
+    width: min(100%, 1000px);
+    padding: 24px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--surface);
+}
+.entry-garden { display: block; width: 100%; height: auto; border-radius: 8px; }
+.entry-layout .entry-panel {
+    width: 100%;
+    padding: 16px;
+    border: 0;
+    align-items: flex-start;
+    text-align: left;
+}
+.entry-layout .entry-mascot { width: 64px; height: 64px; }
+.entry-layout .primary-button { width: 100%; }
+.loginOptionsMainContent { display: grid; gap: 20px; width: 100%; }
+.loginOptionActions { width: 100%; }
+.loginOptionActions .loginOptionButton { min-height: 48px; width: 100%; font-size: 15px; }
+.loginOptionActions { margin-top: 20px; }
+.entry-layout .loginOptionActions { margin-top: 0; }
+#loginOptionsContainer .entry-layout {
+    width: min(100%, 920px);
+    grid-template-columns: minmax(0, 1.15fr) minmax(280px, 1fr);
+    gap: 36px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+}
+#loginOptionsContainer .entry-garden { border-radius: var(--radius); }
+#loginOptionsContainer .entry-panel { padding: 0; border-radius: 0; background: transparent; }
+#loginOptionsContainer .entry-mascot { width: 56px; height: 56px; }
+#loginOptionsContainer .loginOptionsMainContent { max-width: 360px; margin-inline: auto; gap: 0; }
+.login-heading { display: grid; gap: 10px; margin: 18px 0 24px; }
+.login-heading h1 { font-weight: 750; }
+.login-heading p { font-size: 14px; line-height: 1.75; word-break: keep-all; }
+.login-heading p span { display: block; }
+#loginOptionsContainer .loginOptionButton { background: var(--surface); font-weight: 600; }
+#loginOptionsContainer .loginOptionButton:hover { background: var(--blue-wash); }
+#loginOptionCancelContainer { margin-top: 12px; }
+.loginOptionButton { border-color: var(--control-line); }
+#waitingContent { display: flex; flex-direction: column; align-items: center; gap: 20px; width: min(100%, 520px); text-align: center; }
+#waitingContent h1 { font-size: 25px; font-weight: 700; line-height: 1.45; word-break: keep-all; text-wrap: balance; }
+.waitingSpinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--blue-wash);
+    border-top-color: var(--blue);
+    border-radius: 50%;
+    animation: wait-spin 900ms linear infinite;
+}
+@keyframes wait-spin { to { transform: rotate(1turn); } }
+
+#overlayContainer {
+    position: absolute;
+    inset: var(--frame-height) 0 0;
+    place-items: safe center;
+    padding: 20px;
+    overflow: auto;
+}
+#loadingContainer {
+    position: absolute;
+    top: 0;
+    z-index: 2;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-start;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #171b1d;
+}
+.launcher-starting #frameBar { visibility: hidden; }
+
+/* Reuse the launcher artwork so startup feels like part of the same screen. */
+#loadingContainer::before {
+    position: absolute;
+    content: '';
+    inset: 0;
+    background: linear-gradient(to top, rgba(13, 18, 17, 0.94), rgba(13, 18, 17, 0.54) 48%, rgba(13, 18, 17, 0.14));
+}
+
+#loadingContent {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin: 0 0 48px 54px;
+    animation: loadEnter 0.45s ease-out both;
+}
+
+#loadCenterImage {
+    width: 78px;
+    height: 78px;
+    object-fit: contain;
+}
+
+#loadingCopy {
+    display: flex;
+    flex-direction: column;
+}
+
+#loadingTitle {
+    color: #ffffff;
+    font-family: 'Avenir Medium', sans-serif;
+    font-size: 24px;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+}
+
+#loadingSubtitle {
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 13px;
+    margin-top: 5px;
+}
+
+#loadingBar {
+    width: 210px;
+    height: 2px;
+    margin-top: 14px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.32);
+}
+
+#loadingBar::before {
+    display: block;
+    content: '';
+    width: 36%;
+    height: 100%;
+    background: #ffffff;
+    animation: loadSlide 1.6s ease-in-out infinite;
+}
+
+@keyframes loadEnter {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes loadSlide {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(280%); }
+}
+
+@keyframes launcher-reveal {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+#overlayContainer { z-index: 3; background: rgb(29 42 58 / 43%); }
+#overlayContainer [role="dialog"] {
+    animation: launcher-reveal 200ms ease-out;
+    width: min(100%, 540px);
+    padding: 24px;
+    border-radius: var(--radius);
+    background: var(--surface);
+    box-shadow: 0 12px 32px rgb(29 42 58 / 22%);
+}
+#overlayContainer h2 { margin: 0 0 10px; font-size: 21px; line-height: 1.25; }
+#overlayDesc { color: var(--muted); overflow-wrap: anywhere; }
+#launchFailureDesc { color: var(--muted); line-height: 1.65; }
+#overlayContainer #launchFailureContent { max-height: calc(100dvh - var(--frame-height) - 40px); overflow: auto; }
+#launchFailureDetails { margin-top: 16px; color: var(--muted); font-size: 13px; }
+#launchFailureDetails summary { width: fit-content; cursor: pointer; color: var(--blue); }
+#launchFailureDiagnostic { max-height: 130px; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; user-select: text; padding: 12px; background: var(--rail); border-radius: 6px; font-size: 12px; }
+#launchFailureCopy { color: var(--blue); background: var(--blue-wash); padding: 8px 12px; border-radius: 6px; }
+#launchFailureCopy:hover { background: var(--line); }
+#launchFailureCopyStatus { margin-inline-start: 8px; }
+.launch-failure-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 8px; margin-top: 20px; }
+#launchFailureReport { margin-inline-end: auto; font-size: 14px; }
+#settingsValidationHint { border: 0; color: var(--danger); background: transparent; font-size: 13px; line-height: 1.5; padding: 6px 0 10px; text-align: left; text-decoration: underline; text-underline-offset: 3px; }
+#overlayActionContainer, #serverSelectActions, #accountSelectActions {
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    gap: 8px;
+    margin-top: 18px;
+}
+#serverSelectListScrollable, #accountSelectListScrollable {
+    display: grid;
+    gap: 5px;
+    max-height: min(460px, calc(100dvh - 240px));
+    overflow: auto;
+    padding: 3px;
+}
+.serverListing, .accountListing {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    padding: 10px;
+    color: var(--ink);
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    text-align: left;
+    transition: background-color var(--ease), color var(--ease);
+}
+.serverListing:hover, .accountListing:hover { background: var(--rail); }
+.serverListing[aria-pressed="true"], .accountListing[aria-pressed="true"] {
+    color: var(--focus);
+    background: var(--blue-wash);
+}
+.accountListing img, .settingsAuthAccountImage { background: transparent; }
+.serverListingDetails { display: grid; min-width: 0; gap: 2px; overflow-wrap: anywhere; }
+.serverListingDetails > :first-child { font-size: 15px; font-weight: 700; word-break: keep-all; }
+.serverListingDetails > :not(:first-child), .serverListingInfo { color: var(--muted); font-size: 13px; }
+.serverListingInfo { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.serverListingStarWrapper { display: inline-flex; align-items: center; }
+.serverListingStarWrapper svg { width: 14px; height: 14px; }
+.serverListingStarTooltip { margin-left: 4px; }
+
+#settingsContainer {
+    display: grid;
+    grid-template-columns: var(--nav-width) minmax(0, 1fr);
+    height: 100%;
+    line-height: 1.6;
+}
+#settingsContainerLeft {
+    min-height: 0;
+    padding: 28px 16px;
+    overflow: auto;
+    border-right: 1px solid var(--line);
+    background: var(--rail);
+}
+#settingsNavContainer, #settingsNavItemsContainer { display: flex; flex-direction: column; min-height: 100%; }
+#settingsNavHeader { margin: 0 14px 16px; font-size: 20px; font-weight: 700; }
+#settingsNavItemsContainer, #settingsNavItemsContent { flex: 1; }
+#settingsNavItemsContainer { min-height: 0; }
+#settingsNavItemsContent { display: flex; flex-direction: column; gap: 4px; padding: 3px; }
+.settingsNavItem {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 42px;
+    padding: 8px 12px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--ink);
+    font-size: 15px;
+    font-weight: 550;
+    text-align: left;
+    transition: background-color var(--ease), color var(--ease);
+}
+.settingsNavItem:hover { background: var(--surface); }
+.settingsNavItem[selected] { background: var(--surface); color: var(--ink); font-weight: 700; }
+.settingsNavItem[selected]::before {
+    content: '';
+    position: absolute;
+    inset: 12px auto 12px 4px;
+    width: 3px;
+    border-radius: 2px;
+    background: var(--blue);
+}
+.settingsNavItem svg {
+    flex: none;
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    color: var(--muted);
+}
+.settingsNavItem[selected] svg { color: var(--blue); }
+.settingsNavSpacer { height: 1px; margin: 12px 14px; background: var(--line); flex: none; }
+.settingsNavDivider { display: none; }
+#settingsNavContentBottom { margin-top: auto; padding-top: 16px; }
+#settingsNavDone { width: 100%; padding-inline: 6px; white-space: nowrap; }
+#settingsContainerRight { min-width: 0; min-height: 0; background: var(--surface); }
+.settingsTab {
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    padding: 24px clamp(18px, 3vw, 40px);
+}
+.settingsTabHeader { display: grid; gap: 8px; max-width: 840px; margin-bottom: 24px; }
+.settingsTabHeaderText { font-size: 24px; font-weight: 750; line-height: 1.3; }
+.settingsTabHeaderDesc { color: var(--muted); font-size: 14px; max-width: 72ch; }
+.settingsTab[data-no-server] > :not(.settingsTabHeader, .settings-empty-server) { display: none; }
+.settings-empty-server { color: var(--muted); padding: 14px 0; }
+.settings-service-status { max-width: 840px; padding: 16px 0; }
+.settings-service-status summary { cursor: pointer; font-weight: 600; }
+#mojang_status_text { margin-top: 8px; color: var(--muted); }
+#mojangServiceList { list-style: none; padding: 0; margin: 8px 0 0; }
+#mojangServiceList li { display: flex; justify-content: space-between; gap: 8px; padding: 4px 0; }
+
+/* Selected server content container */
+.settingsSelServContainer {
+    background: var(--rail);
+    width: 100%;
+    border-radius: 3px;
+    display: flex;
+    justify-content: space-between;
+    margin: 15px 0px;
+}
+
+/* Div which will be populated with the selected server's information. */
+.settingsSelServContent {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 5px 0px;
+}
+
+/* Wrapper container for the switch server button. */
+.settingsSwitchServerContainer {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+}
+
+/* Button to switch server configurations on the mods tab. */
+.settingsSwitchServerButton {
+    border: 1px solid var(--line);
+    color: var(--ink);
+    background: none;
+    font-size: 12px;
+    border-radius: 3px;
+    font-family: inherit;
+    transition: 0.25s ease;
+    cursor: pointer;
+}
+.settingsSwitchServerButton:hover,
+.settingsSwitchServerButton:focus {
+    background: var(--line);
+}
+.settingsSwitchServerButton:active {
+    background: var(--line);
+    border: 1px solid var(--line);
+    color: var(--muted);
+}
+
+/* Remove spin button from number inputs. */
+#settingsContainer input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+
+/* Default styles for text/number inputs. */
+#settingsContainer input[type=number],
+#settingsContainer input[type=text] {
+    color: var(--ink);
+    background: var(--rail);
+    border-radius: 3px;
+    border: 1px solid var(--line);
+    font-family: inherit;
+    transition: 0.25s ease;
+}
+#settingsContainer input[type=number]:focus,
+#settingsContainer input[type=text]:focus {
+    border-color: var(--line);
+}
+#settingsContainer input[type=number][error] {
+    border-color: var(--danger);
+    background: #fbe9e9;
+    color: var(--danger);
+}
+
+/* Styles for a generic settings entry. */
+.settingsFieldContainer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 0;
+    width: 100%;
+}
+.settingsFieldLeft {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.settingsFieldTitle {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink);
+}
+.settingsFieldDesc {
+    color: var(--muted);
+    margin-top: 0;
+    line-height: 1.65;
+}
+.settingsDivider {
+    height: 1px;
+    width: 100%;
+    background: var(--line);
+}
+
+/* Toggle Switch */
+.toggleSwitch {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 20px;
+    border-radius: 50px;
+    box-sizing: border-box;
+}
+.toggleSwitch input {
+    display:none;
+}
+.toggleSwitchSlider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--line);
+    transition: .4s;
+    border-radius: 50px;
+    border: 1px solid var(--line);
+}
+.toggleSwitchSlider:before {
+    position: absolute;
+    content: "";
+    height: 13px;
+    width: 16px;
+    left: 3px;
+    bottom: 3px;
+    background-color: var(--surface);
+    border-radius: 50px;
+    transition: .4s;
+}
+input:checked + .toggleSwitchSlider {
+    background-color: var(--blue);
+    /* box-shadow: inset 2px 1px 20px black; */
+    border: 1px solid var(--blue);
+}
+input:checked + .toggleSwitchSlider:before {
+    transform: translateX(15px);
+}
+
+/* Range Slider styles. */
+.rangeSlider {
+    width: 35%;
+    height: 5px;
+    margin: 15px 0px;
+    background: grey;
+    border-radius: 3px;
+    position: relative;
+}
+.rangeSliderBar {
+    position: absolute;
+    background: var(--blue);
+    width: 50%;
+    height: 5px;
+    border-radius: 3px 0px 0px 3px;
+    transition: background 0.25s ease;
+}
+.rangeSliderTrack {
+    position: absolute;
+    top: -7.5px;
+    width: 7px;
+    height: 20px;
+    background: var(--surface);
+    border-radius: 3px;
+    left: 50%;
+    cursor: ew-resize;
+}
+
+/* File selectors */
+
+/* Main container for File selectors. */
+.settingsFileSelContainer {
+    display: flex;
+    flex-direction: column;
+    margin-block: var(--section-gap);
+    width: 100%;
+}
+
+/* File selector title. */
+.settingsFileSelTitle {
+    margin-bottom: 10px;
+}
+
+/* Wrapper container for the actionable elements. */
+.settingsFileSelActions {
+    display: flex;
+    width: 100%;
+}
+
+/* File selector icon settings. */
+.settingsFileSelIcon {
+    display: flex;
+    align-items: center;
+    background: var(--line);
+    border-radius: 3px 0px 0px 3px;
+    padding: 5px;
+    transition: 0.25s ease;
+}
+.settingsFileSelSVG {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+}
+
+/* Disabled text field which stores the selected file path. */
+.settingsFileSelVal {
+    border-radius: 0px !important;
+    width: 100%;
+    padding: 5px 10px;
+    min-height: 38px;
+}
+
+/* File selection button. */
+.settingsFileSelButton {
+    border: 0px;
+    border-radius: 0px 3px 3px 0px;
+    font-size: 12px;
+    padding: 0px 5px;
+    cursor: pointer;
+    background: var(--line);
+    transition: 0.25s ease;
+    white-space: nowrap;
+}
+.settingsFileSelButton:active {
+    color: var(--muted);
+}
+
+/* Description for the file selector. */
+.settingsFileSelDesc {
+    margin: 12px 0 0;
+    color: var(--muted);
+    max-width: 68ch;
+}
+.settingsFileSelDesc strong {
+    font-family: inherit;
+}
+
+/* * *
+* Settings View (Account Tab)
+* * */
+
+.settingsAuthAccountTypeContainer {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+}
+
+.settingsAuthAccountTypeHeader {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    justify-content: space-between;
+    padding: 10px 0px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 14px;
+}
+
+.settingsAuthAccountTypeHeaderLeft {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+/* Settings add account button styles. */
+.settingsAddAuthAccount {
+    background: none;
+    border: none;
+    text-align: left;
+    padding: 2px 0px;
+    color: var(--ink);
+    cursor: pointer;
+    transition: 0.25s ease;
+}
+.settingsAddAuthAccount:active {
+    color: var(--muted);
+}
+.settingsAddAuthAccount:disabled {
+    color: var(--muted);
+    pointer-events: none;
+}
+
+/* Auth account list container styles. */
+.settingsCurrentAccounts {
+    display: grid;
+    gap: 8px;
+}
+.settingsCurrentAccounts > .settingsAuthAccount:not(:last-child) {
+    margin-bottom: 0;
+}
+.settingsCurrentAccounts > .settingsAuthAccount:not(:first-child) {
+    margin-top: 0;
+}
+
+/* Auth account shared styles. */
+.settingsAuthAccount {
+    display: flex;
+    background: var(--surface);
+    min-height: 88px;
+    border-bottom: 1px solid var(--line);
+}
+.settingsAuthAccount:has(.settingsAuthAccountSelect[selected]) { background: var(--paper); border-radius: 12px; border-bottom-color: transparent; }
+
+/* Left hand side of an auth account element, for the skin image. */
+.settingsAuthAccountLeft {
+    display: flex;
+    align-items: center;
+    padding: 12px 0 12px 12px;
+}
+
+/* Image of the auth account's skin. */
+.settingsAuthAccountImage {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: 0;
+}
+
+/* Right hand side of the auth account, for info + actions. */
+.settingsAuthAccountRight {
+    display: flex;
+    width: 100%;
+    min-width: 0;
+}
+
+/* Account details container. */
+.settingsAuthAccountDetails {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-left: 12px;
+    padding-block: 10px;
+    flex: 1;
+    min-width: 0;
+}
+.settingsAuthAccountDetails > *:not(:last-child) {
+    margin-bottom: 6px;
+}
+
+/* Account detail element styles. */
+.settingsAuthAccountDetailPane {
+    display: flex;
+    flex-direction: column;
+}
+.settingsAuthAccountDetailTitle {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: bold;
+    font-family: inherit;
+}
+.settingsAuthAccountDetailValue {
+    font-size: 14px;
+    -webkit-user-select: initial;
+    overflow-wrap: anywhere;
+}
+.settingsAuthAccountDetailPane:first-child .settingsAuthAccountDetailTitle { display: none; }
+.settingsAuthAccountDetailPane:first-child .settingsAuthAccountDetailValue { font-size: 17px; font-weight: 650; }
+.settingsAccountId summary { color: var(--muted); font-size: 13px; cursor: pointer; }
+.settingsAccountId .settingsAuthAccountDetailValue { margin-top: 4px; font-size: 13px; color: var(--muted); }
+
+/* Account actions container. */
+.settingsAuthAccountActions {
+    display: flex;
+    flex: none;
+    flex-direction: row;
+    justify-content: center;
+    gap: 8px;
+    align-items: center;
+    padding: 12px;
+}
+
+/* Account select button shared styles. */
+.settingsAuthAccountSelect {
+    border: none;
+    white-space: nowrap;
+    background: none;
+    font-family: inherit;
+    transition: 0.25s ease;
+}
+.settingsAuthAccountSelect:hover:not([selected]),
+.settingsAuthAccountSelect:focus:not([selected]) {
+    cursor: pointer;
+}
+.settingsAuthAccountSelect[selected] {
+    pointer-events: none;
+}
+
+/* Account logout button shared styles. */
+.settingsAuthAccountLogOut {
+    white-space: nowrap;
+    border: 1px solid var(--danger);
+    color: var(--danger);
+    background: none;
+    font-size: 12px;
+    border-radius: 3px;
+    font-family: inherit;
+    transition: 0.25s ease;
+    cursor: pointer;
+}
+.settingsAuthAccountLogOut:hover,
+.settingsAuthAccountLogOut:focus {
+    background: #fbe9e9;
+}
+.settingsAuthAccountLogOut:active {
+    background: #fbe9e9;
+    border: 1px solid var(--danger);
+    color: var(--danger);
+}
+
+/* * *
+* Settings View (Minecraft Tab)
+* * */
+
+/* Game resolution UI elements. */
+#settingsGameResolutionContainer {
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 20px;
+    width: 100%;
+}
+#settingsGameResolutionContent {
+    display: flex;
+    align-items: center;
+    padding-top: 10px;
+}
+#settingsGameResolutionCross {
+    color: var(--muted);
+    padding: 0px 15px;
+}
+#settingsGameWidth,
+#settingsGameHeight {
+    padding: 7.5px 5px;
+    width: 75px;
+}
+
+/* * *
+* Settings View (Mods Tab)
+* * */
+
+.settingsModsServer {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 10px 16px;
+    padding: 12px;
+    margin-bottom: var(--section-gap);
+    border-radius: 12px;
+    background: var(--paper);
+}
+.settingsModsServer .settingsSelServContent { flex: 1 1 200px; }
+.settingsModsServer .serverListingImg { background: transparent; }
+.settingsModsServer .serverListingInfo { display: none; }
+
+#settingsModsContainer { display: grid; gap: var(--section-gap); }
+.settingsModsSection {
+    min-width: 0;
+}
+.settingsModsManagedSection:has(> .settingsModList:empty) { display: none; }
+.settingsModsSectionHeading {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px 16px;
+}
+.settingsModsHeader {
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1.35;
+}
+.settingsModsNote {
+    max-width: 68ch;
+    margin-top: 4px;
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.6;
+}
+.settingsModList:not(:empty) {
+    margin-top: 12px;
+    padding: 0;
+    border-block: 1px solid var(--line);
+}
+.settingsModsEmpty {
+    max-width: none;
+    margin-top: 12px;
+    padding: 16px 0;
+    border-block: 1px solid var(--line);
+}
+.settingsModList:not(:empty) + .settingsModsEmpty { display: none; }
+.settingsBaseMod + .settingsBaseMod { border-top: 1px solid var(--line); }
+
+.settingsModContent {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+    min-height: 52px;
+    padding: 8px 4px 8px 0;
+}
+.settingsModDetails {
+    display: grid;
+    gap: 2px;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+.settingsModName { font-size: 15px; font-weight: 600; }
+.settingsModVersion, .settingsModRequired {
+    color: var(--muted);
+    font-size: 14px;
+}
+.settingsModActions { display: flex; align-items: center; gap: 12px; }
+.settingsModActions .toggleSwitch { flex: none; }
+.settingsSubModContainer {
+    margin-inline-start: 8px;
+    padding-inline-start: 12px;
+    border-inline-start: 1px solid var(--line);
+}
+.settingsBaseMod:not([enabled]) > .settingsSubModContainer .settingsModName { color: var(--muted); }
+
+.settingsDropinRemoveButton {
+    min-height: 36px;
+    padding: 6px 8px;
+    border: 0;
+    background: transparent;
+    color: var(--danger);
+    font-size: 14px;
+    font-weight: 600;
+}
+.settingsDropinRemoveButton:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+#settingsShadersSelect {
+    display: block;
+    width: min(100%, 420px);
+    min-height: 38px;
+    margin-top: 10px;
+    padding: 5px 10px;
+    border: 1px solid var(--control-line);
+    border-radius: 6px;
+    background: var(--surface);
+    color: var(--ink);
+    font: inherit;
+    text-overflow: ellipsis;
+}
+
+/* * *
+* Settings View (Java Tab)
+* * */
+
+/* Style links on the Java tab. */
+#settingsTabJava a:hover, .settingsChangelogText a:hover { color: var(--blue-hover); }
+
+/* Main container for memory management. */
+#settingsMemoryContainer {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: var(--section-gap);
+    border-bottom: 1px solid var(--line);
+    margin-bottom: var(--section-gap);
+}
+
+/* Memory management title. */
+#settingsMemoryTitle {
+    margin-bottom: 16px;
+    font-size: 17px;
+    font-weight: 700;
+}
+
+/* Memory management content. */
+#settingsMemoryContent {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+    width: 100%;
+}
+#settingsMemoryContentLeft {
+    width: 100%;
+}
+#settingsMemoryContentRight {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+/* Header for memory sliders. */
+.settingsMemoryHeader {
+    font-size: 14px;
+}
+
+/* Wrapper container for a memory slider and label. */
+.settingsMemoryActionContainer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Label which displays a memory slider's value. */
+.settingsMemoryLabel {
+    font-size: 14px;
+    margin-right: 2%;
+}
+
+/* Range sliders for min and max memory settings. */
+#settingsMaxRAMRange,
+#settingsMinRAMRange {
+    width: 85%;
+}
+
+/* Memory status elements. */
+#settingsMemoryStatus {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px 24px;
+}
+#settingsMemoryStatus > .settingsMemoryStatusContainer:not(:last-child){
+    margin-bottom: 0;
+}
+.settingsMemoryStatusContainer {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+.settingsMemoryStatusTitle {
+    font-size: 14px;
+    color: var(--muted);
+    font-weight: 400;
+}
+.settingsMemoryStatusValue {
+    color: var(--ink);
+    font-size: 14px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Description for memory management. */
+#settingsMemoryDesc {
+    margin: 12px 0 0;
+    color: var(--muted);
+}
+
+/* Status text which displays details on the selected executable. */
+#settingsJavaExecDetails {
+    font-size: 14px;
+    font-weight: 400;
+    margin: 8px 0;
+    color: var(--muted);
+}
+
+/* Main container for the JVM options setting. */
+#settingsJVMOptsContainer {
+    width: 100%;
+    padding-top: var(--section-gap);
+    border-top: 1px solid var(--line);
+}
+
+/* JVM options title. */
+#settingsJVMOptsTitle {
+    margin-bottom: 12px;
+    font-size: 16px;
+    font-weight: 650;
+}
+
+/* Wrapper container for the actionable elements. */
+#settingsJVMOptsContent {
+    display: flex;
+    width: 100%;
+}
+
+/* Text field to input the JVM options. */
+#settingsJVMOptsVal {
+    border-radius: 0px 3px 3px 0px !important;
+    width: 100%;
+    padding: 5px 10px;
+}
+#settingsJVMOptsContent:focus-within > .settingsJavaIcon {
+    background: var(--line);
+}
+
+/* Description for the JVM options setting. */
+#settingsJVMOptsDesc {
+    margin: 12px 0 0;
+    color: var(--muted);
+    max-width: 68ch;
+}
+
+/* * *
+* Settings View (Launcher Tab)
+* * */
+
+/* Tailored style for the data directory header. */
+#settingsDataDirTitle {
+    margin-bottom: 10px;
+}
+
+/* * *
+* Settings View (About Tab)
+* * */
+
+#settingsAboutCurrentContainer, #settingsUpdateStatusContainer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px 20px;
+    padding: 20px;
+    margin-bottom: var(--section-gap);
+    background: var(--paper);
+    border-radius: 12px;
+}
+.settingsChangelogContainer { padding-top: 20px; margin-block: var(--section-gap); border-top: 1px solid var(--line); }
+
+#settingsAboutCurrentHeadline {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+#settingsAboutLogo {
+    width: 36px;
+    height: 36px;
+    flex: none;
+}
+#settingsAboutTitle, #settingsUpdateTitle, .settingsChangelogTitle {
+    font-size: 17px;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+#settingsAboutCurrentVersion, #settingsUpdateVersion {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+#settingsAboutCurrentVersionCheck, #settingsUpdateVersionCheck {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--success);
+    color: var(--on-blue);
+    font-size: 12px;
+    font-weight: 700;
+}
+#settingsAboutCurrentVersionTitle, #settingsUpdateVersionTitle {
+    color: var(--success);
+    font-weight: 650;
+}
+#settingsAboutCurrentVersionLine, #settingsUpdateVersionLine { color: var(--muted); }
+#settingsAboutCurrentVersionCheck[data-prerelease], #settingsUpdateVersionCheck[data-prerelease] {
+    background: var(--warning);
+}
+#settingsAboutCurrentVersionTitle[data-prerelease], #settingsUpdateVersionTitle[data-prerelease] {
+    color: var(--warning);
+}
+#settingsAboutButtons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+}
+.settingsChangelogActions { margin-top: 16px; }
+.settingsChangelogHeadline { margin-bottom: 16px; }
+.settingsChangelogText { line-height: 1.7; }
+.settingsChangelogText :is(p, li) { max-width: 72ch; }
+.settingsChangelogText :is(p, ul, ol, blockquote, pre) { margin: 0 0 10px; }
+.settingsChangelogText > :last-child { margin-bottom: 0; }
+.settingsChangelogText :is(ul, ol) { padding-inline-start: 1.5em; }
+.settingsChangelogText li + li { margin-top: 4px; }
+.settingsChangelogText blockquote {
+    padding-inline-start: 12px;
+    border-inline-start: 1px solid var(--line);
+    color: var(--muted);
+}
+.settingsChangelogText :is(pre, code, tt) {
+    font-family: ui-monospace, Consolas, monospace;
+    font-size: 0.95em;
+    user-select: text;
+}
+.settingsChangelogText :is(code, tt) {
+    padding: 0.1em 0.35em;
+    border-radius: 4px;
+    background: var(--paper);
+}
+.settingsChangelogText pre {
+    overflow: auto;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: var(--paper);
+}
+.settingsChangelogText pre code {
+    padding: 0;
+    background: transparent;
+    font-size: inherit;
+}
+
+/* Preserve the existing settings controls and their layout hooks. */
+.home-server-list, .home-stage, #settingsContainerLeft, .settingsTab,
+#serverSelectListScrollable, #accountSelectListScrollable { scrollbar-width: thin; }
+#settingsContainer :is(.settingsFieldContainer, .settingsAuthAccountTypeContainer, .settingsSelServContainer,
+    .settingsFileSelContainer, .settingsChangelogContainer, .settingsDivider, #settingsMemoryContainer,
+    #settingsJVMOptsContainer, #settingsAboutCurrentContainer, #settingsUpdateStatusContainer,
+    #settingsGameResolutionContainer, #settingsModsContainer, .settingsModsServer) {
+    width: 100%;
+    max-width: 840px;
+}
+#settingsContainer .settingsFieldContainer { gap: 16px; }
+.settingsFieldLeft, .settingsFileSelContent, .settingsSelServContent, #settingsMemoryContentLeft { min-width: 0; }
+.settingsFieldRight { flex: none; }
+#settingsGameResolutionContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 12px 0;
+}
+#settingsGameResolutionContent { flex-shrink: 0; margin: 0; padding: 0; }
+#settingsContainer #settingsGameResolutionContent input { width: 72px; }
+#settingsContainer :is(input[type="number"], input[type="text"]) {
+    min-width: 0;
+    min-height: 38px;
+    border-radius: 6px;
+    border-color: var(--control-line);
+    background: var(--surface);
+    font-family: inherit;
+}
+#settingsContainer input[type="number"][error] { color: var(--danger); border-color: var(--danger); background: #fbe9e9; }
+#settingsContainer :is(button, a, input, select, [role="slider"]):focus-visible,
+#settingsContainer .toggleSwitch:focus-within {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+}
+#settingsContainer .toggleSwitch input {
+    display: block;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+}
+#settingsContainer .toggleSwitchSlider { background: var(--control-line); }
+#settingsContainer .toggleSwitchSlider::before {
+    width: 14px;
+    height: 14px;
+    bottom: 2px;
+    box-shadow: none;
+}
+#settingsContainer input:checked + .toggleSwitchSlider { background: var(--blue); border-color: var(--blue); }
+#settingsContainer .rangeSlider { background: var(--line); }
+#settingsContainer .rangeSliderBar { background: var(--blue); }
+#settingsContainer .rangeSliderTrack { background: var(--blue-hover); }
+#settingsContainer .settingsSelServContainer {
+    align-items: center; gap: 12px; padding: 12px; margin: 0 0 var(--section-gap);
+    border-radius: 12px; background: var(--paper);
+}
+#settingsContainer .settingsSelServContainer .serverListingInfo { display: none; }
+#settingsContainer .settingsSelServContent { gap: 8px; padding: 0; }
+#settingsContainer .settingsSwitchServerContainer { padding: 0; }
+#settingsContainer .settingsSwitchServerButton { white-space: nowrap; }
+#settingsContainer .settingsAuthAccountTypeHeader { gap: 8px; flex-wrap: wrap; }
+#settingsContainer .settingsAuthAccount { min-width: 0; max-width: 100%; }
+#settingsContainer :is(.settingsFileSelActions, #settingsJVMOptsContent) { width: 100%; min-width: 0; }
+#settingsContainer :is(.settingsFileSelVal, #settingsJVMOptsVal) { flex: 1; min-width: 0; width: 0; }
+#settingsContainer .settingsFileSelButton { flex: none; }
+#settingsContainer :where(.settingsAboutButton, .settingsAddAuthAccount, .settingsAuthAccountSelect,
+    .settingsAuthAccountLogOut, .settingsSwitchServerButton, .settingsModsFolderButton,
+    .settingsFileSelButton, #settingsUpdateActionButton) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 38px;
+    padding: 7px 12px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: var(--surface);
+    color: var(--ink);
+    font-size: 14px;
+    line-height: 1.35;
+    text-decoration: none;
+}
+#settingsContainer :where(.settingsAboutButton, .settingsAddAuthAccount, .settingsAuthAccountSelect,
+    .settingsAuthAccountLogOut, .settingsSwitchServerButton, .settingsModsFolderButton,
+    .settingsFileSelButton, #settingsUpdateActionButton):hover,
+#settingsContainer .settingsModsFolderButton[drag] {
+    background: var(--blue-wash);
+}
+#settingsContainer :is(button:disabled, .settingsAuthAccountSelect[selected]) { color: var(--muted); }
+#settingsContainer .settingsAuthAccountSelect[selected] { border-color: transparent; background: transparent; color: var(--success); }
+#settingsContainer #settingsUpdateActionButton:disabled { color: var(--muted); }
+#settingsContainer .settingsAuthAccountLogOut { color: var(--danger); }
+#settingsContainer #settingsUpdateActionButton { background: var(--blue); color: var(--on-blue); border-color: transparent; }
+#settingsContainer #settingsUpdateActionButton:hover:enabled { background: var(--blue-hover); }
+#settingsContainer #settingsUpdateActionButton:disabled { background: var(--rail); color: var(--muted); }
+.settingsFileSelTitle { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+.settingsFileSelTitle, #settingsJVMOptsTitle { display: block; }
+#settingsContainer :is(.settingsFileSelActions, #settingsJVMOptsContent) {
+    border: 1px solid var(--control-line);
+    border-radius: 8px;
+    background: var(--surface);
+    overflow: clip;
+}
+#settingsContainer :is(.settingsFileSelActions, #settingsJVMOptsContent):focus-within {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+}
+#settingsContainer :is(.settingsFileSelVal, #settingsJVMOptsVal) { border: 0; border-radius: 0; font-size: 14px; }
+#settingsContainer :is(.settingsFileSelActions, #settingsJVMOptsContent) :is(input, button) { min-height: 36px; }
+#settingsContainer .settingsFileSelButton { border: 0; border-left: 1px solid var(--line); border-radius: 0; }
+.settingsFileSelIcon, .settingsJavaIcon { min-width: 36px; justify-content: center; background: var(--paper); }
+.settingsFieldError { color: var(--danger); font-size: 13px; padding-top: 6px; }
+.rangeSlider { touch-action: none; cursor: pointer; }
+.rangeSlider::before { content: ""; position: absolute; inset: -12px 0; }
+#settingsContainer .rangeSliderTrack {
+    width: 14px;
+    height: 14px;
+    top: -4.5px;
+    border-radius: 50%;
+    transform: translateX(-50%);
+}
+#settingsContainer :is(.settingsChangelogText, .settingsFieldDesc, .settingsTabHeaderDesc, #settingsJVMOptsDesc) {
+    overflow-wrap: anywhere;
+}
+
+@media (max-height: 630px) {
+    .home-rail { padding-block: 16px; }
+    .home-rail h2 { margin-bottom: 16px; }
+    .settingsTab { padding-block: 20px; }
+}
+@media (width >= 760px) {
+    .home-rail { padding-bottom: 0; }
+    .home-rail-tools { height: 112px; padding: 15px 0 16px; }
+}
+@media (width < 760px) {
+    #serverSetupContainer { padding-block: 18px; }
+    .server-setup-list { margin-top: 20px; gap: 6px; }
+    .server-setup-list .home-server { min-height: 56px; padding-block: 10px; }
+    .server-setup-list .home-server img { width: 30px; height: 30px; }
+    #user_text { max-width: 90px; }
+    .entry-layout { grid-template-columns: minmax(0, 1fr); width: min(100%, 440px); padding: 16px; }
+    .entry-garden { display: none; }
+    #loginOptionsContainer .entry-layout { grid-template-columns: minmax(0, 1fr); width: min(100%, 360px); }
+    #landingContainer { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }
+    .home-rail { flex-direction: row; align-items: center; gap: 8px; padding: 8px 12px; border: 0; border-bottom: 1px solid var(--line); }
+    .home-rail h2 { margin: 0; font-size: 13px; }
+    .home-server-list {
+        display: flex;
+        flex-direction: row;
+        flex: 1;
+        min-width: 0;
+        height: 68px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scrollbar-width: thin;
+    }
+    .home-rail-tools {
+        display: grid;
+        grid-template-columns: repeat(2, 36px);
+        gap: 2px 4px;
+        margin: 0;
+        padding: 0 0 0 8px;
+        border-top: 0;
+        border-left: 1px solid var(--line);
+    }
+    .home-rail-tools .rail-tool { justify-content: center; height: 36px; min-height: 36px; padding: 6px; }
+    .rail-report-row { display: contents; }
+    #homeLauncherVersion { grid-column: 1 / -1; justify-content: center; height: 20px; padding: 0; font-size: 12px; }
+    .home-rail-tools .rail-tool span { display: none; }
+    .home-server { flex: 0 0 auto; width: max-content; max-width: 280px; height: 56px; min-height: 56px; padding: 8px 10px 8px 12px; gap: 8px; font-size: 14px; }
+    .home-server img { width: 26px; height: 26px; }
+    .home-server[aria-pressed="true"]::before { inset-block: 50% auto; }
+    .home-summary { gap: 8px 12px; padding: 12px; }
+    .home-action { flex-basis: 220px; }
+    .home-server-copy h1 { font-size: 20px; }
+    .home-server-copy { gap: 6px 12px; }
+    #settingsContainer { grid-template-columns: 154px minmax(0, 1fr); }
+    #settingsContainerLeft { padding-inline: 9px; }
+    .settingsNavItem { gap: 8px; padding-inline: 12px; }
+    .settingsNavItem svg { width: 18px; height: 18px; }
+    .settingsTab { padding-inline: 20px; }
+    .settingsTabHeader { margin-bottom: 16px; }
+    .settingsModContent { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+    .settingsModActions { justify-content: flex-end; }
+    #settingsAboutCurrentContainer, #settingsUpdateStatusContainer { padding: 20px; }
+    #settingsContainer .settingsAuthAccountActions { flex-wrap: wrap; }
+    #settingsContainer .settingsAuthAccountRight { flex-wrap: wrap; }
+    #settingsContainer .settingsAuthAccountActions { flex-direction: row; padding-top: 0; }
+}
+@media (max-height: 540px) {
+    #launchFailureDiagnostic { max-height: 80px; }
+    #settingsContainerLeft { padding-block: 12px; }
+    #settingsNavHeader { margin-bottom: 8px; }
+    #settingsNavContentBottom { padding-top: 10px; }
+    .settingsNavItem { min-height: 36px; padding-block: 6px; }
+    .settingsNavSpacer { margin-block: 6px; }
+}
+@media (max-width: 590px) {
+    #frameBar { gap: 6px; padding-left: 8px; }
+    .frame-brand-title { display: none; }
+    #user_text { max-width: 90px; }
+    .home-summary { flex-wrap: wrap; padding: 12px; }
+    .home-server-copy { min-width: min(160px, 100%); }
+    #settingsContainer { grid-template-columns: 126px minmax(0, 1fr); }
+    #settingsNavDone { font-size: 12px; }
+    #settingsContainer .settingsSelServContainer { flex-wrap: wrap; }
+    #settingsContainer #settingsGameResolutionContainer { align-items: flex-start; flex-direction: column; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .launch-pending-track::before { animation: none; transform: translateX(93%); }
+    #loadingContent, #loadingBar::before { animation: none; }
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+/* Preserve illustration continuity during server selection. */
+.home-illustration { position: relative; }
+.home-art-outgoing { position: absolute; inset: 0; pointer-events: none; }
+
+#settingsUpdateDownload { flex: 1 0 100%; min-width: 0; }
+.update-download-readout { display: flex; justify-content: space-between; gap: 16px; margin-bottom: 10px; color: var(--ink); font-weight: 650; }
+#settingsUpdateDownloadPercent, #settingsUpdateDownloadSize { font-variant-numeric: tabular-nums; }
+#settingsUpdateDownloadBar { display: block; width: 100%; height: 8px; border: 0; border-radius: 4px; overflow: hidden; accent-color: var(--blue); }
+#settingsUpdateDownloadBar::-webkit-progress-bar { background: var(--blue-wash); border-radius: 4px; }
+#settingsUpdateDownloadBar::-webkit-progress-value { background: var(--blue); border-radius: 4px; }
+#settingsUpdateDownloadSize { display: block; margin-top: 8px; color: var(--muted); font-size: 13px; }
+
+.valley-artwork {
+    position: relative;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    isolation: isolate;
+    background: radial-gradient(ellipse at 45% 35%, #f8d69b 0%, #dfac68 46%, #a97148 100%);
+}
+.valley-wallpaper { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1; }
+.valley-hero-logo { width: min(62%, 400px); height: min(94%, 400px); object-fit: contain; filter: drop-shadow(0 12px 18px #48230755); }
+.entry-garden.valley-artwork { min-height: 0; }
+.valley-pack-issues { padding: 12px 24px; background: var(--rail); color: var(--ink); border-top: 1px solid var(--line); }
+.valley-pack-issues ul { margin: 4px 0 0; padding-left: 18px; max-height: 6.5em; overflow: auto; overflow-wrap: anywhere; }
+.valley-pack-issues ul:empty { display: none; }
+#valleyImportButton, #valleyPickFolder, #valleyLoginButton { border-color: var(--line); background: var(--surface); }
+.valley-import-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+#valleyLoginButton { display: flex; width: min(100%, 200px); margin: 0 0 6px auto; }
+@media (max-width: 760px) { .entry-garden.valley-artwork { display: none; } }
+.valley-wallpaper-settings { margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--line); }
+.valley-wallpaper-settings h2 { font-size: 17px; }
+.valley-wallpaper-settings p { margin: 6px 0; color: var(--muted); }

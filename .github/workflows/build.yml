@@ -1,0 +1,46 @@
+name: Windows Release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: windows-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v6
+
+      - name: Set up Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Prepare bundled Temurin JRE 17
+        run: npm run runtime:prepare
+
+      - name: Validate bundled Java
+        run: .\runtime\windows-x64\bin\java.exe -version
+
+      - name: Test
+        run: node --test test/*.test.js
+
+      - name: Build custom setup and update feed
+        run: npm run dist:setup
+
+      - name: Publish Windows release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: pwsh
+        run: |
+          $version = (Get-Content package.json -Raw | ConvertFrom-Json).version
+          gh release create "v$version" "dist/custom-setup/sttadyu-valley-setup-$version.exe" "dist/custom-setup/sttadyu-valley-setup-$version.exe.blockmap" "dist/custom-setup/latest.yml" --title "Launcher $version" --generate-notes --latest --target $env:GITHUB_SHA

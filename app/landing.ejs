@@ -1,0 +1,62 @@
+<div id="landingContainer" style="display: none;">
+    <nav class="home-rail" aria-labelledby="homeServerHeading">
+        <h2 id="homeServerHeading">모드팩</h2>
+        <div id="homeServerList" class="home-server-list"></div>
+        <footer class="home-rail-tools">
+            <button id="openGameFolderButton" class="rail-tool" type="button" aria-label="<%= lang('landing.openGameFolder') %>" title="<%= lang('landing.openGameFolder') %>" disabled>
+                <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M2.5 6V4h5l2 2h8v10h-15Z"/></svg>
+                <span><%= lang('landing.openGameFolder') %></span>
+            </button>
+            <div class="rail-report-row">
+                <a id="reportIssueLink" class="rail-tool" href="<%= lang('settings.supportLink') %>" aria-label="<%= lang('landing.reportIssue') %>" title="<%= lang('landing.reportIssueHint') %>">
+                <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 15H2.5V3.5h15V15h-8L5 18v-3Z"/><path d="M10 6v4m0 2.5v.2"/></svg>
+                <span><%= lang('landing.reportIssue') %></span>
+                </a>
+                <span id="homeLauncherVersion" title="<%= lang('landing.launcherVersion') %>"></span>
+            </div>
+        </footer>
+    </nav>
+    <main class="home-stage">
+        <div class="home-edition">
+            <div class="home-illustration valley-artwork">
+                <img class="valley-wallpaper" alt="" hidden>
+                <img class="valley-hero-logo" src="assets/images/valley-logo.png" width="640" height="640" alt="s'따듀밸리">
+            </div>
+            <section id="valleyPackIssues" class="valley-pack-issues" aria-labelledby="valleyPackMessage" hidden>
+                <p id="valleyPackMessage" role="status"></p>
+                <ul id="valleyPackMissing"></ul>
+            </section>
+            <div class="home-summary">
+                <div class="home-server-copy">
+                    <h1 id="homeServerName"><%= lang('landing.loadingServer') %></h1>
+                    <div class="home-server-facts">
+                        <p id="homeServerMeta" class="home-server-meta" hidden></p>
+                        <p id="homeServerStatus" class="home-server-status" aria-live="polite" hidden></p>
+                    </div>
+                    <div class="valley-import-actions">
+                        <button id="valleyImportButton" class="quiet-button" type="button">Prism 모드팩 가져오기</button>
+                        <button id="valleyPickFolder" class="quiet-button" type="button" hidden>다른 폴더</button>
+                    </div>
+                </div>
+                <div class="home-action">
+                    <button id="valleyLoginButton" class="quiet-button" type="button">Microsoft 로그인</button>
+                    <div id="launch_content">
+                        <button id="launch_button" class="primary-button" type="button" disabled>
+                            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6 3.5 16 10 6 16.5z" fill="currentColor"/></svg>
+                            <span id="launch_button_label"><%= lang('landing.launchButton') %></span>
+                        </button>
+                    </div>
+                    <div id="launch_details" hidden>
+                        <div class="launch-readout">
+                            <span id="launch_details_text" role="status"><%= lang('landing.launchDetails') %></span>
+                            <span id="launch_progress_label" aria-hidden="true">0%</span>
+                        </div>
+                        <progress id="launch_progress" value="0" max="100" aria-labelledby="launch_details_text"></progress>
+                        <div class="launch-pending-track" aria-hidden="true"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script src="./assets/js/scripts/landing.js"></script>
+</div>

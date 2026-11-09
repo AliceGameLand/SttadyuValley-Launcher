@@ -1,0 +1,61 @@
+appId: 'kr.dreamcraft.sttadyuvalley.launcher'
+productName: "s'따듀밸리"
+artifactName: 'sttadyu-valley-launcher-setup-${version}.${ext}'
+
+copyright: 'Copyright © 2026 JooHwan Kim. Helios Launcher © Daniel Scalzi.'
+
+asar: true
+compression: 'maximum'
+
+publish:
+  provider: github
+  owner: AliceGameLand
+  repo: SttadyuValley-Launcher
+
+files:
+  - '!{dist,runtime,.runtime-cache,.gitignore,.vscode,docs,.impeccable,PRODUCT.md,DESIGN.md,dev-app-update.yml,.nvmrc,eslint.config.mjs}'
+
+extraResources:
+  - 'libraries'
+  - from: 'runtime/windows-x64'
+    to: 'runtime/windows-x64'
+
+# Windows Configuration
+win:
+  executableName: SttadyuValley
+  icon: 'build/icon.ico'
+  target: 
+    - target: 'nsis'
+      arch: 'x64'
+
+# Windows Installer Configuration
+nsis:
+  oneClick: false
+  perMachine: false
+  allowElevation: true
+  allowToChangeInstallationDirectory: true
+
+# macOS Configuration
+mac:
+  target:
+    - target: 'dmg'
+      arch:
+        - 'x64'
+        - 'arm64'
+  artifactName: '${productName}-setup-${version}-${arch}.${ext}'
+  category: 'public.app-category.games'
+
+# Linux Configuration
+linux: 
+  icon: 'build/icon.png'
+  target: 'AppImage'
+  maintainer: 'JooHwan Kim'
+  vendor: 'SttadyuValley'
+  synopsis: "s'따듀밸리 Minecraft 런처"
+  description: 'Minecraft 1.20.1과 Forge 클라이언트를 자동으로 설치하고 업데이트합니다.'
+  category: 'Game'
+
+
+directories:
+  buildResources: 'build'
+  output: 'dist'

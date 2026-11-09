@@ -1,0 +1,30 @@
+<html lang="ko" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" http-equiv="Content-Security-Policy" content="script-src 'self' 'sha256-In6B8teKZQll5heMl9bS7CESTbGvuAt3VVV86BUQBDk='"/>
+    <title><%= lang('app.title') %></title>
+    <script src="./assets/js/scripts/uicore.js"></script>
+    <script src="./assets/js/scripts/uibinder.js"></script>
+    <link type="text/css" rel="stylesheet" href="./assets/css/launcher.css">
+</head>
+<body class="launcher-starting">
+    <%- include('frame') %>
+    <div id="main">
+        <%- include('waiting') %>
+        <%- include('loginOptions') %>
+        <%- include('serverSetup') %>
+        <%- include('settings') %>
+        <%- include('landing') %>
+    </div>
+    <%- include('overlay') %>
+    <div id="loadingContainer" role="status" aria-live="polite">
+        <div id="loadingContent">
+            <img id="loadCenterImage" src="assets/images/LoadingSeal.png" alt="">
+            <div id="loadingCopy">
+                <div id="loadingTitle"><%= lang('app.title') %></div>
+                <div id="loadingSubtitle"><%= lang('app.loading') %></div>
+                <div id="loadingBar" aria-hidden="true"></div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
