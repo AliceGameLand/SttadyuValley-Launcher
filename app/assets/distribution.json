@@ -73,6 +73,28 @@
                         "url": "https://cdn.modrinth.com/data/R6NEzAwj/versions/UhZjVKiD/ComplementaryUnbound_r5.9.1.zip",
                         "path": "shaderpacks/ComplementaryUnbound_r5.9.1.zip"
                     }
+                },
+                {
+                    "id": "sunlit:mods/plasmovoice-forge-1.20.1-2.1.17.jar",
+                    "name": "Plasmo Voice 2.1.17",
+                    "type": "File",
+                    "artifact": {
+                        "size": 12337455,
+                        "MD5": "b755e7e243c3776df8faea789c17d228",
+                        "url": "https://cdn.modrinth.com/data/1bZhdhsH/versions/KoHwlbDf/plasmovoice-forge-1.20.1-2.1.17.jar",
+                        "path": "mods/plasmovoice-forge-1.20.1-2.1.17.jar"
+                    }
+                },
+                {
+                    "id": "sunlit:mods/talking-heads-1.1.4+1.20.1+forge.jar",
+                    "name": "Talking Heads 1.1.4",
+                    "type": "File",
+                    "artifact": {
+                        "size": 467868,
+                        "MD5": "5b699dc4ae53dc99b9a01384e27f9d92",
+                        "url": "https://cdn.modrinth.com/data/Os35nfkh/versions/ZalItlqz/talking-heads-1.1.4%2B1.20.1%2Bforge.jar",
+                        "path": "mods/talking-heads-1.1.4+1.20.1+forge.jar"
+                    }
                 }
             ]
         }
