@@ -15,6 +15,8 @@ publish:
 files:
   - '!{dist,runtime,.runtime-cache,.gitignore,.vscode,docs,.impeccable,PRODUCT.md,DESIGN.md,dev-app-update.yml,.nvmrc,eslint.config.mjs}'
 
+  - '!{installer,scripts,test,patches}/**'
+
 extraResources:
   - 'libraries'
   - from: 'runtime/windows-x64'
@@ -24,6 +26,7 @@ extraResources:
 win:
   executableName: SttadyuValley
   icon: 'build/icon.ico'
+  electronLanguages: ['ko', 'en-US', 'en-GB']
   target: 
     - target: 'nsis'
       arch: 'x64'

@@ -5,16 +5,14 @@ const os = require('node:os')
 const path = require('node:path')
 const vm = require('node:vm')
 const { EventEmitter } = require('node:events')
-const { createHash } = require('node:crypto')
 const { promisify } = require('node:util')
 
 // Exercise the actual main process without opening windows or invoking an installer.
 async function fixture(t, options = {}){
     const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'sttadyu-setup-flow-'))
     t.after(() => fs.rmSync(directory, { recursive: true, force: true }))
-    fs.mkdirSync(path.join(directory, 'payload'))
-    const bytes = Buffer.alloc(150000, 37)
-    fs.writeFileSync(path.join(directory, 'payload/launcher.exe'), bytes)
+    const installer = path.join(directory, options.missingInstaller ? 'missing.exe' : 'setup.exe')
+    if(!options.missingInstaller) fs.writeFileSync(installer, 'fixture')
     const handlers = new Map()
     const reports = []
     let window, spawned = null
@@ -45,10 +43,10 @@ async function fixture(t, options = {}){
             return child
         }
     }
-    const manifest = { version:'1.0.19', executable:'QA-Launcher.exe', sha256:options.badHash ? 'invalid' : createHash('sha256').update(bytes).digest('hex') }
+    const metadata = { version:'1.0.19', launcherExecutable:'QA-Launcher.exe' }
     const runtimeFs = { ...fs, existsSync: file => options.existing && file === 'D:\\기존 런처\\SttadyuValley.exe' ? true : fs.existsSync(file) }
-    const req = name => name === 'node:fs' ? runtimeFs : name === 'electron' ? electron : name === './payload.json' ? manifest : name === './update-target.cjs' ? require('../installer/update-target.cjs') : name === './paths.cjs' ? require('../installer/paths.cjs') : name === 'node:child_process' ? childProcess : require(name)
-    vm.runInNewContext(fs.readFileSync(path.join(__dirname, '../installer/main.cjs'), 'utf8'), { require:req, __dirname:path.join(__dirname,'../installer'), process:{ env:process.env, resourcesPath:directory }, console })
+    const req = name => name === 'node:fs' ? runtimeFs : name === 'electron' ? electron : name === './package.json' ? metadata : name === './update-target.cjs' ? require('../installer/update-target.cjs') : name === './paths.cjs' ? require('../installer/paths.cjs') : name === 'node:child_process' ? childProcess : require(name)
+    vm.runInNewContext(fs.readFileSync(path.join(__dirname, '../installer/main.cjs'), 'utf8'), { require:req, __dirname:path.join(__dirname,'../installer'), process:{ env:process.env, argv:['wizard.exe', '--sttadyu-installer', installer] }, console })
     await new Promise(resolve => setImmediate(resolve))
     const invoke = (name, value) => handlers.get('setup:' + name)({ sender:window.webContents }, value)
     return { invoke, handlers, get window(){ return window }, reports, destination:path.join(directory, '게임 폴더'), get spawned(){ return spawned } }
@@ -70,7 +68,7 @@ test('custom setup uses a sandboxed frameless window and rejects foreign IPC', a
     assert.equal(f.window.config.webPreferences.nodeIntegration, false)
     assert.throws(() => f.handlers.get('setup:info')({ sender:{} }), /Unknown/)
 })
-test('custom setup verifies payload, serializes writes and launches only its installed file', async t => {
+test('custom setup checks the installer path, serializes writes and launches only its installed file', async t => {
     const f = await fixture(t)
     assert.equal(await f.invoke('launch'), false)
     const pending = f.invoke('install', { destination:f.destination, mode:'user' })
@@ -96,10 +94,10 @@ test('custom setup leaves running launchers alone and unlocks after a rejected s
     f.invoke('close')
     assert.equal(f.window.closed, true)
 })
-test('custom setup refuses corrupt payloads and permits retry after backend errors', async t => {
-    const corrupt = await fixture(t, { badHash:true })
-    assert.equal((await corrupt.invoke('install', { destination:corrupt.destination })).ok, false)
-    assert.equal(corrupt.spawned, null)
+test('custom setup refuses missing installers and permits retry after backend errors', async t => {
+    const missing = await fixture(t, { missingInstaller:true })
+    assert.equal((await missing.invoke('install', { destination:missing.destination })).ok, false)
+    assert.equal(missing.spawned, null)
     const failed = await fixture(t, { fail:true })
     for(let attempt = 0; attempt < 2; attempt++){
         assert.equal((await failed.invoke('install', { destination:failed.destination })).ok, false)
