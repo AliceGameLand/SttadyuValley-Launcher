@@ -518,6 +518,10 @@ async function dlAsync(serverId, attempt) {
     let failureKey = 'landing.dlAsync.errorDuringFileVerificationTitle'
     try {
         setLaunchDetails(Lang.queryJS('landing.dlAsync.validatingFileIntegrity'))
+        if(remote.app.isPackaged){
+            const forge = serv.modules[0]
+            await ForgeInstaller.prepareBundledInstaller(forge.getPath(), forge.rawModule.artifact)
+        }
         const invalidFileCount = await Promise.race([fullRepairModule.verifyFiles(setLaunchPercentage), workerFailure])
         setLaunchPercentage(100)
         if(invalidFileCount > 0){

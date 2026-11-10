@@ -20,6 +20,19 @@ const donationBytes = localDonation ? fs.readFileSync(localDonation) : await fet
 if(createHash('sha1').update(donationBytes).digest('hex') !== donation.sha1) throw new Error('Unexpected Donation JAR checksum')
 fs.mkdirSync(donationDir, { recursive: true })
 fs.writeFileSync(donationPath, donationBytes)
+const { artifact: forge } = require('../app/assets/distribution.json').servers[0].modules.find(module => module.type === 'ForgeHosted')
+const forgeName = path.basename(new URL(forge.url).pathname)
+const forgePath = path.join(donationDir, forgeName)
+const localForge = process.env.STTADYU_FORGE_INSTALLER
+const forgeBytes = localForge ? fs.readFileSync(localForge) : await fetch(forge.url, { signal: AbortSignal.timeout(15 * 60 * 1000) }).then(async response => {
+    if(!response.ok) throw new Error('Forge installer download failed: HTTP ' + response.status)
+    return Buffer.from(await response.arrayBuffer())
+})
+if(forgeBytes.length !== forge.size || createHash('md5').update(forgeBytes).digest('hex') !== forge.MD5) {
+    throw new Error('Unexpected Forge installer size or checksum')
+}
+fs.writeFileSync(forgePath, forgeBytes)
+
 const stage = path.join(root, 'dist/setup-ui-app')
 const installerFiles = ['index.html', 'main.cjs', 'paths.cjs', 'preload.cjs', 'renderer.js', 'style.css', 'update-target.cjs']
 const assets = {
@@ -51,7 +64,7 @@ await build({
         extends: path.join(root, 'electron-builder.yml'),
         directories: { output: 'dist/custom-setup' },
         artifactName: 'sttadyu-valley-setup-${version}.${ext}',
-        extraResources: [{ from: donationPath, to: 'client-mods/' + donation.name }, {
+        extraResources: [{ from: donationPath, to: 'client-mods/' + donation.name }, { from: forgePath, to: 'forge/' + forgeName }, {
             from: stage,
             to: 'setup-wizard',
             filter: ['package.json', ...installerFiles, ...Object.keys(assets).map(name => 'assets/' + name)]

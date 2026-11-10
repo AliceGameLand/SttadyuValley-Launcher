@@ -1,4 +1,5 @@
 const { execFile } = require('node:child_process')
+const { createHash } = require('node:crypto')
 const { promisify } = require('node:util')
 const path = require('node:path')
 const fs = require('fs-extra')
@@ -8,6 +9,31 @@ const version = '1.20.1-47.4.0'
 
 function libraryPath(commonDirectory, artifactPath) {
     return path.join(commonDirectory, 'libraries', artifactPath)
+}
+
+async function prepareBundledInstaller(target, artifact, resources = process.resourcesPath) {
+    async function matches(file) {
+        const stat = await fs.stat(file).catch(error => {
+            if(error.code !== 'ENOENT') throw error
+            return null
+        })
+        if(!stat?.isFile() || stat.size !== artifact.size) return false
+        const hash = createHash('md5')
+        for await(const bytes of fs.createReadStream(file)) hash.update(bytes)
+        return hash.digest('hex') === artifact.MD5
+    }
+
+    if(await matches(target)) return
+    const source = path.join(resources, 'forge', path.basename(target))
+    const staged = target + '.bundled'
+    await fs.ensureDir(path.dirname(target))
+    try {
+        await fs.copyFile(source, staged)
+        if(!await matches(staged)) throw new Error('내장 Forge 설치파일의 체크섬이 다릅니다.')
+        await fs.rename(staged, target)
+    } finally {
+        await fs.remove(staged)
+    }
 }
 
 async function ensureInstalled(commonDirectory, installer, manifest, javaw) {
@@ -38,4 +64,5 @@ async function ensureInstalled(commonDirectory, installer, manifest, javaw) {
     if(!await complete()) throw new Error('Forge 47.4.0 설치 파일을 찾을 수 없습니다.')
 }
 
+exports.prepareBundledInstaller = prepareBundledInstaller
 exports.ensureInstalled = ensureInstalled
