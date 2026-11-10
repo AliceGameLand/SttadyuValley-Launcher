@@ -4,11 +4,10 @@ Windows x64용 **Society: Sunlit Valley 4.1.5A** 런처입니다. Helios 기반 
 
 ## 시작하기
 
-1. Prism Launcher에서 [Society: Sunlit Valley 4.1.5A](https://www.curseforge.com/minecraft/modpacks/society-sunlit-valley/files/8980840)를 설치합니다.
-2. 런처에서 Minecraft Java Edition을 소유한 Microsoft 계정으로 로그인하고 **플레이**를 누릅니다.
-3. 첫 플레이 때 Prism 모드팩을 가져옵니다. 폴더 선택 창이 뜨면 해당 인스턴스를 선택합니다. 누락 파일이 표시되면 링크에서 내려받아 Prism의 해당 폴더에 넣고 다시 플레이를 누릅니다.
+1. 런처에서 Minecraft Java Edition을 소유한 Microsoft 계정으로 로그인합니다.
+2. **플레이**를 누르면 첫 실행에 Sunlit Valley 4.1.5A 모드팩과 추가 리소스를 자동으로 다운로드합니다. 다운로드가 중단되면 플레이를 다시 눌러 이어서 준비할 수 있습니다.
 
-Prism 원본은 읽기 전용으로 사용합니다. 모드·리소스팩·셰이더팩은 정확한 해시를 확인해 복사하고 기본 설정은 CurseForge 원본 아카이브에서 가져옵니다. 월드·서버 목록·개인 옵션·계정은 가져오기에서 제외합니다.
+모드팩 파일은 CurseForge에서 내려받아 체크섬을 검증합니다. 기존 월드와 개인 설정은 유지합니다. 후원 보상의 외형을 표시하는 클라이언트 리소스팩이 함께 설치됩니다.
 
 첫 실행 때 [공식 Buzzy Bees 배경](https://www.minecraft.net/en-us/collectibles)을 내려받습니다. 설정에서 단색 배경으로 바꿀 수 있습니다. Minecraft의 공식 제품이 아니며 Mojang 또는 Microsoft의 승인·제휴와 관계없습니다.
 

@@ -38,57 +38,34 @@ let launchAttempt = 0
 const packIssues = document.getElementById('valleyPackIssues')
 const packMessage = document.getElementById('valleyPackMessage')
 const missingFiles = document.getElementById('valleyPackMissing')
-let failedPrismFolder
 
 const gameDirectory = () => path.join(ConfigManager.getInstanceDirectory(), ConfigManager.getSelectedServer() ?? 'sunlit-valley-4.1.5a')
 
 async function prepareSunlitPack(){
-    if(SunlitPack.isReady(gameDirectory())) return true
-
-    let prismFolder = SunlitPack.prismDefault()
-    try {
-        await SunlitPack.inspectPrism(prismFolder)
-    } catch {
-        prismFolder = null
-    }
-    if(!prismFolder || failedPrismFolder){
-        const result = await remote.dialog.showOpenDialog(remote.getCurrentWindow(), {
-            title: 'Sunlit Valley 4.1.5A가 설치된 Prism 인스턴스 선택',
-            defaultPath: failedPrismFolder ?? path.dirname(SunlitPack.prismDefault()),
-            properties: ['openDirectory']
-        })
-        if(result.canceled) return false
-        prismFolder = result.filePaths[0]
-    }
-
     missingFiles.replaceChildren()
     packIssues.hidden = true
     setLaunchDetails('Sunlit Valley 모드팩 준비 중…')
     try {
-        await SunlitPack.importPack(prismFolder, gameDirectory(), (phase, done, total) => {
+        if(!SunlitPack.isReady(gameDirectory())) await SunlitPack.installPack(gameDirectory(), (phase, done, total) => {
             if(phase === 'defaults'){
                 setLaunchDetails('모드팩 기본 설정을 받는 중…')
                 setLaunchIndeterminate()
             } else {
-                setLaunchDetails(phase === 'verify' ? '모드팩 파일 확인 중…' : '모드팩 파일 복사 중…')
-                setLaunchPercentage(done * 100 / total)
+                setLaunchDetails('모드팩 파일 다운로드 및 확인 중…')
+                setDownloadPercentage(done * 100 / total)
             }
         })
-        failedPrismFolder = undefined
+        await SunlitPack.prepareDonationResources(gameDirectory())
         return true
     } catch(error) {
-        failedPrismFolder = prismFolder
         packIssues.hidden = false
         packMessage.textContent = error.message + ' 플레이를 눌러 다시 시도해 주세요.'
         for(const file of error.missing ?? []){
             const item = document.createElement('li')
-            const link = document.createElement('a')
-            link.href = 'https://www.curseforge.com/api/v1/mods/' + file.projectId + '/files/' + file.fileId + '/download'
-            link.textContent = file.path
-            item.append(link)
+            item.textContent = file.path + ' · ' + file.message
             missingFiles.append(item)
         }
-        loggerLanding.warn('Sunlit Valley import failed.', error.message)
+        loggerLanding.warn('Sunlit Valley setup failed.', error.message)
         return false
     }
 }
@@ -510,7 +487,7 @@ async function dlAsync(serverId, attempt) {
     }
 
     if(!SunlitPack.isReady(gameDirectory())){
-        showLaunchFailure('모드팩이 필요해요', 'Prism에서 Sunlit Valley 4.1.5A를 가져와 주세요.')
+        showLaunchFailure('모드팩이 필요해요', '플레이를 다시 눌러 Sunlit Valley 모드팩 설치를 완료해 주세요.')
         return
     }
     const authUser = ConfigManager.getSelectedAccount()

@@ -4,15 +4,12 @@ const fs = require('fs-extra')
 const path = require('node:path')
 const AdmZip = require('adm-zip')
 const got = require('got')
+const { downloadFile } = require('./reliabledownload')
 const pack = require('../config/sunlit-lock.json')
 
 const marker = '.sunlit-pack.json'
 const overrideFolders = new Set(['config', 'configureddefaults', 'defaultconfigs', 'kubejs', 'patchouli_books', 'resourcepacks'])
-const activeImports = new Set()
-
-function prismDefault() {
-    return path.join(process.env.APPDATA ?? '', 'PrismLauncher', 'instances', 'Society- Sunlit Valley')
-}
+const activeInstalls = new Set()
 
 function isReady(destination) {
     try {
@@ -22,24 +19,6 @@ function isReady(destination) {
     }
 }
 
-async function inspectPrism(selected) {
-    const root = /^(?:\.minecraft|minecraft)$/i.test(path.basename(selected)) ? path.dirname(selected) : selected
-    const components = await fs.readJson(path.join(root, 'mmc-pack.json')).catch(() => null)
-    const cfg = await fs.readFile(path.join(root, 'instance.cfg'), 'utf8').catch(() => '')
-    const flame = await fs.readJson(path.join(root, 'flame/manifest.json')).catch(() => null)
-    const versionMatches = flame?.version === pack.version || /^ManagedPackVersionID=8980840\s*$/m.test(cfg)
-    if (!versionMatches
-        || !components?.components?.some(entry => entry.uid === 'net.minecraft' && entry.version === pack.minecraft)
-        || !components.components.some(entry => entry.uid === 'net.minecraftforge' && `forge-${entry.version}` === pack.forge)) {
-        throw new Error('Prism에서 Society: Sunlit Valley 4.1.5A 인스턴스 폴더를 선택해 주세요.')
-    }
-    for (const name of ['minecraft', '.minecraft']) {
-        const game = path.join(root, name)
-        if ((await fs.lstat(game).catch(() => null))?.isDirectory()) return fs.realpath(game)
-    }
-    throw new Error('선택한 Prism 인스턴스에 게임 폴더가 없습니다.')
-}
-
 async function matches(file, sha1) {
     if (!(await fs.lstat(file).catch(() => null))?.isFile()) return false
     const hash = createHash('sha1')
@@ -47,19 +26,9 @@ async function matches(file, sha1) {
     return hash.digest('hex') === sha1
 }
 
-async function matchAsset(game, asset, names) {
-    const requested = path.join(game, asset.path)
-    if (await matches(requested, asset.sha1)) return requested
-    const folder = path.dirname(asset.path)
-    const ext = path.extname(asset.path)
-    const stem = path.basename(asset.path, ext)
-    const alternatives = names.get(folder).filter(name =>
-        name.startsWith(stem) && /^\s*\(\d+\)$/.test(name.slice(stem.length, -ext.length)) && name.endsWith(ext))
-    for (const name of alternatives) {
-        const candidate = path.join(game, folder, name)
-        if (await matches(candidate, asset.sha1)) return candidate
-    }
-    return null
+function assetUrl(asset) {
+    const directory = Math.floor(asset.fileId / 1000) + '/' + asset.fileId % 1000
+    return 'https://mediafilez.forgecdn.net/files/' + directory + '/' + encodeURIComponent(path.basename(asset.path))
 }
 
 async function loadOverrides() {
@@ -94,6 +63,7 @@ async function mergeStaged(staging, destination) {
     await fs.remove(path.join(destination, marker))
     async function merge(relative) {
         for (const entry of await fs.readdir(path.join(staging, relative), { withFileTypes: true })) {
+            if (!relative && entry.name === marker) continue
             const child = path.join(relative, entry.name)
             const target = path.join(destination, child)
             const current = await fs.lstat(target).catch(error => {
@@ -115,58 +85,76 @@ async function mergeStaged(staging, destination) {
     await fs.rename(path.join(staging, marker), path.join(destination, marker))
 }
 
-async function importPack(selected, destination, onProgress = () => {}, getOverrides = loadOverrides) {
+async function installPack(destination, onProgress = () => {}, fetchAsset = downloadFile, getOverrides = loadOverrides) {
     const key = path.resolve(destination).toLowerCase()
-    if (activeImports.has(key)) throw new Error('이미 모드팩을 가져오는 중입니다.')
-    activeImports.add(key)
-    let staging
+    if (activeInstalls.has(key)) throw new Error('이미 모드팩을 준비하는 중입니다.')
+    activeInstalls.add(key)
+    const staging = destination + '.pack-staging'
     try {
-        const game = await inspectPrism(selected)
-        const source = game.toLowerCase()
-        if (key === source || key.startsWith(source + path.sep) || source.startsWith(key + path.sep)) {
-            throw new Error('Prism 폴더와 새 게임 폴더는 서로 분리되어 있어야 합니다.')
-        }
-        const names = new Map()
-        for (const folder of ['mods', 'resourcepacks']) {
-            const dir = path.join(game, folder)
-            const stat = await fs.lstat(dir).catch(() => null)
-            if (stat && !stat.isDirectory()) throw new Error(`Prism의 ${folder} 폴더를 확인해 주세요.`)
-            names.set(folder, stat ? await fs.readdir(dir) : [])
-        }
-        const found = []
-        const missing = []
-        for (const [i, asset] of pack.files.entries()) {
-            const file = await matchAsset(game, asset, names)
-            if (file) found.push([asset, file])
-            else missing.push(asset)
-            if (i % 12 === 0) onProgress('verify', i, pack.files.length)
-        }
-        if (missing.length) {
-            const error = new Error('아래 파일을 Prism의 해당 폴더에 넣고 다시 가져와 주세요.')
-            error.missing = missing
+        await fs.ensureDir(staging)
+        if (!(await fs.lstat(staging)).isDirectory()) throw new Error('모드팩 임시 폴더를 확인해 주세요.')
+        const assets = pack.files.filter(asset => /^(mods|resourcepacks)\/[^/\\:]+$/.test(asset.path))
+        if (assets.length !== pack.files.length) throw new Error('모드팩 파일 목록이 올바르지 않습니다.')
+
+        let next = 0
+        let done = 0
+        const failed = []
+        onProgress('download', 0, assets.length)
+        await Promise.all(Array.from({ length: 8 }, async () => {
+            while (next < assets.length) {
+                const asset = assets[next++]
+                const target = path.join(staging, asset.path)
+                try {
+                    if (!await matches(target, asset.sha1) && !await matches(path.join(destination, asset.path), asset.sha1)) {
+                        await fetchAsset(assetUrl(asset), target)
+                        if (!await matches(target, asset.sha1)) {
+                            await fs.remove(target)
+                            throw new Error('다운로드한 파일의 체크섬이 다릅니다.')
+                        }
+                    }
+                    onProgress('download', ++done, assets.length)
+                } catch (error) {
+                    failed.push({ path: asset.path, message: error.message })
+                }
+            }
+        }))
+        if (failed.length) {
+            const error = new Error('모드팩 파일 ' + failed.length + '개를 준비하지 못했습니다.')
+            error.missing = failed
             throw error
         }
 
         onProgress('defaults')
-        const archive = await getOverrides()
-        await fs.ensureDir(path.dirname(destination))
-        staging = await fs.mkdtemp(path.join(path.dirname(destination), '.sunlit-import-'))
-        await stageOverrides(archive, staging, new Set(pack.files.map(asset => asset.path)))
-        for (const [i, [asset, file]] of found.entries()) {
-            const target = path.join(staging, asset.path)
-            await fs.ensureDir(path.dirname(target))
-            await fs.copyFile(file, target)
-            if (!await matches(target, asset.sha1)) throw new Error(`복사 중 파일이 바뀌었습니다. ${asset.path}`)
-            if (i % 12 === 0) onProgress('copy', i, found.length)
-        }
+        await stageOverrides(await getOverrides(), staging, new Set(assets.map(asset => asset.path)))
         await mergeStaged(staging, destination)
+        await fs.remove(staging).catch(() => {})
     } finally {
-        try {
-            if (staging) await fs.remove(staging)
-        } finally {
-            activeImports.delete(key)
-        }
+        activeInstalls.delete(key)
     }
 }
 
-module.exports = { importPack, inspectPrism, isReady, prismDefault }
+async function prepareDonationResources(destination) {
+    const installed = path.join(destination, '.sttadyu-donation-resources-v1')
+    const name = 'SunlitDonationResources.zip'
+    const target = path.join(destination, 'resourcepacks', name)
+    if (await fs.pathExists(installed) && await fs.pathExists(target)) return
+    await fs.copy(path.join(__dirname, '..', 'config', name), target)
+    for (const relative of ['options.txt', 'configureddefaults/options.txt']) {
+        const file = path.join(destination, relative)
+        if (!await fs.pathExists(file)) continue
+        const source = await fs.readFile(file, 'utf8')
+        const updated = source.replace(/^resourcePacks:([^\r\n]*)/m, (line, json) => {
+            try {
+                const packs = JSON.parse(json)
+                if (!Array.isArray(packs) || packs.includes('file/' + name)) return line
+                return 'resourcePacks:' + JSON.stringify([...packs, 'file/' + name])
+            } catch {
+                return line
+            }
+        })
+        if (source !== updated) await fs.writeFile(file, updated)
+    }
+    await fs.outputFile(installed, '')
+}
+
+module.exports = { installPack, isReady, prepareDonationResources }
