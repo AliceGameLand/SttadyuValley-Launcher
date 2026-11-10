@@ -1,6 +1,6 @@
 {
   "name": "sttadyu-valley-launcher",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "productName": "s'따듀밸리",
   "description": "s'따듀밸리 Minecraft 런처",
   "author": "JooHwan Kim <gptnr2140@gmail.com>",
@@ -14,10 +14,9 @@
   "scripts": {
     "start": "electron .",
     "postinstall": "patch-package",
-    "runtime:prepare": "node scripts/prepare-bundled-java.mjs",
     "dist": "electron-builder build",
     "dist:setup": "node scripts/build-setup.mjs",
-    "dist:win": "npm run runtime:prepare && npm run dist -- -w",
+    "dist:win": "npm run dist:setup",
     "dist:mac": "npm run dist -- -m",
     "dist:linux": "npm run dist -- -l",
     "lint": "eslint ."
