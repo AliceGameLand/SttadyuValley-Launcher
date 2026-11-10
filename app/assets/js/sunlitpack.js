@@ -157,4 +157,24 @@ async function prepareDonationResources(destination) {
     await fs.outputFile(installed, '')
 }
 
-module.exports = { installPack, isReady, prepareDonationResources }
+async function prepareLocalDonationMod(destination) {
+    if (!process.env.APPDATA) return
+    const name = 'donation-forge-1.20.1-2.1.3.jar'
+    const mods = path.join(destination, 'mods')
+    const installed = await fs.readdir(mods)
+    if (installed.some(file => /^donation-forge-.*\.jar$/i.test(file))) return
+    const source = path.join(process.env.APPDATA, 'PrismLauncher', 'instances', 'Society- Sunlit Valley', 'minecraft', 'mods', name)
+    const sha1 = 'fb0bd327e21f9ef51d68a7d173c72584b6bc5b2c'
+    if (!await matches(source, sha1)) return
+
+    const target = path.join(mods, name)
+    const staged = target + '.staged'
+    try {
+        await fs.copyFile(source, staged)
+        if (await matches(staged, sha1)) await fs.rename(staged, target)
+    } finally {
+        await fs.remove(staged)
+    }
+}
+
+module.exports = { installPack, isReady, prepareDonationResources, prepareLocalDonationMod }
