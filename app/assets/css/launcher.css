@@ -839,7 +839,7 @@ input:checked + .toggleSwitchSlider {
     border: 1px solid var(--blue);
 }
 input:checked + .toggleSwitchSlider:before {
-    transform: translateX(15px);
+    transform: translateX(18px);
 }
 
 /* Range Slider styles. */
