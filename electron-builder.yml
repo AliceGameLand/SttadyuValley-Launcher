@@ -19,8 +19,6 @@ files:
 
 extraResources:
   - 'libraries'
-  - from: 'runtime/windows-x64'
-    to: 'runtime/windows-x64'
 
 # Windows Configuration
 win:

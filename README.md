@@ -14,6 +14,6 @@ Prism 원본은 읽기 전용으로 사용합니다. 모드·리소스팩·셰�
 
 ## 개발
 
-Node.js 22와 Windows x64에서 `npm ci`, `npm run runtime:prepare`, `npm start`를 사용합니다. 검증은 `npm run lint`와 `node --test test/*.test.js`로 실행합니다. `npm run dist:setup`은 `dist/custom-setup`에 설치파일을 만듭니다.
+Node.js 22와 Windows x64에서 `npm ci`, `npm start`를 사용합니다. Java 17이 없으면 첫 플레이 때 자동으로 설치합니다. 검증은 `npm run lint`와 `node --test test/*.test.js`로 실행합니다. `npm run dist:setup`은 `dist/custom-setup`에 설치파일을 만듭니다.
 
 기본 Microsoft 로그인은 같은 조직의 Alice 런처에서 사용하는 공개 클라이언트 ID를 사용합니다. 로그인 세션은 이 런처의 별도 프로필에 저장됩니다. 자체 등록으로 바꿀 때는 [Microsoft Entra에 등록](https://learn.microsoft.com/en-us/entra/identity-platform/scenario-desktop-app-registration)하고 Minecraft API 접근을 승인받은 공개 클라이언트 ID를 사용합니다. 로컬에서는 `STTADYU_MS_CLIENT_ID`로 지정하고 배포 빌드는 `app/assets/config/auth.json`에 공개 클라이언트 ID를 지정합니다. 개발 프로필을 분리하려면 `STTADYU_LOCAL_PROFILE`에 빈 폴더 경로를 지정합니다.
