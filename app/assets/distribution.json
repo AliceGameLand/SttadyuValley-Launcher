@@ -95,6 +95,17 @@
                         "url": "https://cdn.modrinth.com/data/Os35nfkh/versions/ZalItlqz/talking-heads-1.1.4%2B1.20.1%2Bforge.jar",
                         "path": "mods/talking-heads-1.1.4+1.20.1+forge.jar"
                     }
+                },
+                {
+                    "id": "sunlit:mods/sunlit-named-tags-1.0.0.jar",
+                    "name": "Sunlit Valley Named Tags 1.0.0",
+                    "type": "File",
+                    "artifact": {
+                        "size": 11220,
+                        "MD5": "c4301f9f45b27065aa84eb3ed94da23c",
+                        "url": "https://github.com/AliceGameLand/SttadyuValley-Launcher/releases/download/v1.0.16/sunlit-named-tags-1.0.0.jar",
+                        "path": "mods/sunlit-named-tags-1.0.0.jar"
+                    }
                 }
             ]
         }
