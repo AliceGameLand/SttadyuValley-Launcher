@@ -56,9 +56,7 @@ async function prepareSunlitPack(){
             }
         })
         await SunlitPack.prepareDonationResources(gameDirectory())
-        await SunlitPack.prepareLocalDonationMod(gameDirectory()).catch(error => {
-            loggerLanding.warn('Local Donation mod could not be copied.', error.message)
-        })
+        if(remote.app.isPackaged) await SunlitPack.prepareDonationMod(gameDirectory())
         return true
     } catch(error) {
         packIssues.hidden = false

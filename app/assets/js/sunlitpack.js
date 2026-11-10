@@ -6,6 +6,7 @@ const AdmZip = require('adm-zip')
 const got = require('got')
 const { downloadFile } = require('./reliabledownload')
 const pack = require('../config/sunlit-lock.json')
+const donation = require('../config/donation-mod.json')
 
 const marker = '.sunlit-pack.json'
 const overrideFolders = new Set(['config', 'configureddefaults', 'defaultconfigs', 'kubejs', 'patchouli_books', 'resourcepacks'])
@@ -157,24 +158,24 @@ async function prepareDonationResources(destination) {
     await fs.outputFile(installed, '')
 }
 
-async function prepareLocalDonationMod(destination) {
-    if (!process.env.APPDATA) return
-    const name = 'donation-forge-1.20.1-2.1.3.jar'
+async function prepareDonationMod(destination, resources = process.resourcesPath) {
+    const { name, sha1 } = donation
     const mods = path.join(destination, 'mods')
-    const installed = await fs.readdir(mods)
-    if (installed.some(file => /^donation-forge-.*\.jar$/i.test(file))) return
-    const source = path.join(process.env.APPDATA, 'PrismLauncher', 'instances', 'Society- Sunlit Valley', 'minecraft', 'mods', name)
-    const sha1 = 'fb0bd327e21f9ef51d68a7d173c72584b6bc5b2c'
-    if (!await matches(source, sha1)) return
-
     const target = path.join(mods, name)
+    if (await matches(target, sha1)) return
+    const source = path.join(resources, 'client-mods', name)
+    if (!await matches(source, sha1)) throw new Error('내장 Donation 모드 파일이 손상되었습니다.')
+    const installed = await fs.readdir(mods)
+    if (installed.some(file => file !== name && /^donation-forge-.*\.jar$/i.test(file))) return
+
     const staged = target + '.staged'
     try {
         await fs.copyFile(source, staged)
-        if (await matches(staged, sha1)) await fs.rename(staged, target)
+        if (!await matches(staged, sha1)) throw new Error('Donation 모드 복사 검증에 실패했습니다.')
+        await fs.rename(staged, target)
     } finally {
         await fs.remove(staged)
     }
 }
 
-module.exports = { installPack, isReady, prepareDonationResources, prepareLocalDonationMod }
+module.exports = { installPack, isReady, prepareDonationResources, prepareDonationMod }

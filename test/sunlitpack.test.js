@@ -26,7 +26,7 @@ async function fixture(t){
     const source = await fs.readFile(path.join(__dirname, '../app/assets/js/sunlitpack.js'), 'utf8')
     const module = { exports: {} }
     vm.runInNewContext(source, {
-        module, process, __dirname: path.join(__dirname, '../app/assets/js'), require: name => name === '../config/sunlit-lock.json' ? pack : name === './reliabledownload' ? require('../app/assets/js/reliabledownload') : require(name)
+        module, process, __dirname: path.join(__dirname, '../app/assets/js'), require: name => name === '../config/sunlit-lock.json' ? pack : name === '../config/donation-mod.json' ? require('../app/assets/config/donation-mod.json') : name === './reliabledownload' ? require('../app/assets/js/reliabledownload') : require(name)
     })
     return {
         destination, archive, ...module.exports,
