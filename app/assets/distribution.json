@@ -7,7 +7,7 @@
             "description": "Society: Sunlit Valley 4.1.5A",
             "icon": "assets/images/SealCircle.png",
             "version": "4.1.5A",
-            "address": "localhost:25569",
+            "address": "sunlit-valley.dreamcraft.kr:50001",
             "minecraftVersion": "1.20.1",
             "mainServer": true,
             "autoconnect": true,
